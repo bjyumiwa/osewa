@@ -1,8 +1,6 @@
 // main.js
 
-// =====================
 // 背景と全体のスタイル
-// =====================
 document.body.style.margin = "0";
 document.body.style.minHeight = "100vh";
 document.body.style.fontFamily =
@@ -12,18 +10,14 @@ document.body.style.fontFamily =
 document.body.style.background =
   "linear-gradient(180deg, #fff7fb 0%, #f3f7ff 45%, #ffffff 100%)";
 
-// =====================
 // 1. キャラクター情報
-// =====================
-// 画像のパスはプロジェクトルールに合わせて
-// すべて「public/」から始めています。
+// 画像のパスは、プロジェクトのルールに合わせて「public/」から始めています。
 const characters = [
   {
     id: "health",
     name: "けんこうタイプ",
     description:
       "からだに気をつけているキャラ。歩いたり、水を飲んだりするのが好き。",
-    // 元気そうなグリーンの笑顔
     image: "public/char/greenjoy.png",
   },
   {
@@ -31,26 +25,20 @@ const characters = [
     name: "たべるの大好きタイプ",
     description:
       "おいしいものが大好き。おにぎりもお菓子もニコニコ食べちゃう。",
-    // もぐもぐ楽しそうなブルーの笑顔（仮）
     image: "public/char/bluejoy.png",
   },
   {
     id: "fashion",
     name: "おしゃれタイプ",
     description: "服やアクセサリーが好き。今日のコーデを考えるのが楽しみ。",
-    // ちょっと落ち着いたブルーの calm 表情を採用
     image: "public/char/bluecalm.png",
   },
 ];
 
-// =====================
 // 2. ルート要素を取得
-// =====================
 const root = document.getElementById("root");
 
-// =====================
 // 3. 画面全体のコンテナ
-// =====================
 const container = document.createElement("div");
 container.style.maxWidth = "980px";
 container.style.margin = "0 auto";
@@ -58,9 +46,7 @@ container.style.padding = "32px 20px 40px";
 container.style.minHeight = "100vh";
 container.style.boxSizing = "border-box";
 
-// ---------------------
 // 上部タイトルカード
-// ---------------------
 const headerCard = document.createElement("div");
 headerCard.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
 headerCard.style.borderRadius = "24px";
@@ -69,13 +55,11 @@ headerCard.style.boxShadow = "0 8px 24px rgba(0,0,0,0.06)";
 headerCard.style.marginBottom = "24px";
 headerCard.style.textAlign = "center";
 
-// タイトル
 const title = document.createElement("h1");
 title.textContent = "お世話合戦 キャラクターをえらぶ";
 title.style.margin = "0 0 8px 0";
 title.style.fontSize = "1.8rem";
 
-// サブタイトル
 const intro = document.createElement("p");
 intro.textContent =
   "いっしょにお世話をしていくキャラクターを、1人えらんでください。";
@@ -86,9 +70,7 @@ intro.style.color = "#555";
 headerCard.appendChild(title);
 headerCard.appendChild(intro);
 
-// =====================
-// 4. キャラカードエリア
-// =====================
+// キャラカードエリア
 const gridWrapper = document.createElement("div");
 gridWrapper.style.backgroundColor = "rgba(255, 255, 255, 0.95)";
 gridWrapper.style.borderRadius = "24px";
@@ -100,9 +82,7 @@ grid.style.display = "grid";
 grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(240px, 1fr))";
 grid.style.gap = "16px";
 
-// ---------------------
-// 5. キャラカード作成
-// ---------------------
+// キャラカード作成
 characters.forEach((chara) => {
   const card = document.createElement("button");
   card.style.display = "flex";
@@ -129,7 +109,6 @@ characters.forEach((chara) => {
     card.style.borderColor = "#f0e8ff";
   };
 
-  // 画像
   const img = document.createElement("img");
   img.src = chara.image;
   img.alt = chara.name;
@@ -141,13 +120,11 @@ characters.forEach((chara) => {
   img.style.backgroundColor = "#fff";
   img.style.padding = "8px";
 
-  // キャラ名
   const nameEl = document.createElement("h2");
   nameEl.textContent = chara.name;
   nameEl.style.fontSize = "1.1rem";
   nameEl.style.margin = "8px 0 4px 0";
 
-  // 説明文
   const descEl = document.createElement("p");
   descEl.textContent = chara.description;
   descEl.style.fontSize = "0.88rem";
@@ -155,29 +132,21 @@ characters.forEach((chara) => {
   descEl.style.margin = "0";
   descEl.style.color = "#444";
 
-  // カード組み立て
   card.appendChild(img);
   card.appendChild(nameEl);
   card.appendChild(descEl);
 
-  // クリックしたとき
   card.addEventListener("click", () => {
-    // 選んだキャラを localStorage に保存
     localStorage.setItem("osewa_selectedCharacter", JSON.stringify(chara));
-
-    // ひとまずアラートで確認（あとで画面遷移に変える）
     alert(`「${chara.name}」をえらびました！`);
-
-    // 例：次の画面を作ったらここで遷移
+    // ここで次の画面へ遷移させてもOK
     // window.location.href = "stage1.html";
   });
 
   grid.appendChild(card);
 });
 
-// =====================
-// 6. 画面へ追加
-// =====================
+// 画面に追加
 gridWrapper.appendChild(grid);
 container.appendChild(headerCard);
 container.appendChild(gridWrapper);
