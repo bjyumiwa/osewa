@@ -61,9 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const yoroshikuneButton = document.getElementById("yoroshikune-button");
 
   let selectedCharacterId = null;
-  let selectedCharacterImage = null; // ★ 追加：画像パスを保持
+  let selectedCharacterImage = null;
 
-  // 言語適用
   function applyTranslations() {
     const dict = translations[currentLang] || translations.ja;
 
@@ -101,11 +100,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 初期表示
   updateLangButtons();
   applyTranslations();
 
-  // 言語切り替え
   langButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const lang = btn.dataset.lang;
@@ -117,14 +114,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // スタートボタン：説明 → キャラ選択へ
   startButton.addEventListener("click", () => {
     introScreen.classList.add("hidden");
     charScreen.classList.remove("hidden");
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  // キャラ選択
   characterCards.forEach((card) => {
     card.addEventListener("click", () => {
       characterCards.forEach((c) => c.classList.remove("selected"));
@@ -132,14 +127,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       selectedCharacterId = card.dataset.id;
       const img = card.querySelector("img");
-      selectedCharacterImage = img ? img.getAttribute("src") : null; // ★ ここで画像パスを取得
+      selectedCharacterImage = img ? img.getAttribute("src") : null;
 
       nameArea.classList.remove("hidden");
       updateYoroshikuneButton();
     });
   });
 
-  // 名前入力でボタンの有効/無効を切り替え
   nameInput.addEventListener("input", () => {
     updateYoroshikuneButton();
   });
@@ -153,22 +147,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 「よろしくね！」で別ページへ遷移
   yoroshikuneButton.addEventListener("click", () => {
     const name = nameInput.value.trim();
     if (!name || !selectedCharacterId) return;
 
-    // ローカルストレージに保存（ゲームページで使う）
     localStorage.setItem("osewa_character_id", selectedCharacterId);
     localStorage.setItem("osewa_character_name", name);
     localStorage.setItem("osewa_lang", currentLang);
-
-    // ★ ここで画像パスも保存
     if (selectedCharacterImage) {
       localStorage.setItem("osewa_character_image", selectedCharacterImage);
     }
 
-    // 別ページへ
     window.location.href = "osewa_game.html";
   });
 });
