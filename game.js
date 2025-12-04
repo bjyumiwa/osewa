@@ -1,4 +1,3 @@
-// index.html と同じキーで翻訳を用意
 const gameTranslations = {
   ja: {
     heroTitle: (name) => `${name}とのお世話合戦、スタート！`,
@@ -54,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const characterId = localStorage.getItem("osewa_character_id");
   const characterName = localStorage.getItem("osewa_character_name") || "???";
+  const characterImage = localStorage.getItem("osewa_character_image") || ""; // ★ 追加
 
   // 直接このページを開いた場合はトップに戻す
   if (!characterId) {
@@ -61,14 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // キャラ画像のパス
-  const imageMap = {
-    health: "char/health.png",
-    food: "char/food.png",
-    fashion: "char/fashion.png"
-  };
-
-  petImage.src = imageMap[characterId] || "";
+  // 画像パスは localStorage からそのまま使う
+  if (characterImage) {
+    petImage.src = characterImage;
+  }
   petName.textContent = characterName;
 
   function applyGameTranslations() {
@@ -82,7 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
     missionButtonLabel.textContent = dict.missionButton;
     missionTitle.textContent = dict.missionTitle;
 
-    // ミッションリスト
     missionList.innerHTML = "";
     dict.missions.forEach((m) => {
       const li = document.createElement("li");
@@ -90,7 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
       missionList.appendChild(li);
     });
 
-    // タイプ名
     petType.textContent = dict.typeLabels[characterId] || "";
   }
 
@@ -107,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
   updateLangButtons();
   applyGameTranslations();
 
-  // 言語切り替え
   langButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const lang = btn.dataset.lang;
@@ -119,10 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ミッションボタンは、今は「とくに動きなし」のプレースホルダー
   missionButton.addEventListener("click", () => {
-    // 将来、今日のミッションをAPIから取る／ポップアップを出すなどするとよさそうですね。
-    // とりあえず、上までスクロールするだけにしておきます。
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 });
