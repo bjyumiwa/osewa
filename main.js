@@ -1,163 +1,186 @@
-// main.js
+// 言語ごとのテキスト
+const translations = {
+  ja: {
+    title: "お世話合戦",
+    introLead: "日常の「ちょっとめんどくさいお世話」を、キャラクターといっしょに楽しめるかを試すゲームです。",
+    introBody1: "このアプリは、生活の中の小さな行動（歩く、水を飲む、身だしなみを整えるなど）と、キャラクターへの「お世話」がつながるように設計された研究プロジェクトの一部です。",
+    introBody2: "どのキャラクターを選ぶか、どんな名前をつけるか、どのお世話を選ぶかといった記録は、あとでまとめて分析されます。個人が特定される情報は集めません。",
+    introBody3: "内容に同意してくれたら、「ゲームをはじめる」ボタンを押してスタートしてください。",
+    startButton: "ゲームをはじめる",
 
-// 背景と全体のスタイル
-document.body.style.margin = "0";
-document.body.style.minHeight = "100vh";
-document.body.style.fontFamily =
-  "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+    charTitle: "お世話合戦 キャラクターをえらぶ",
+    charLead: "いっしょにお世話をしていくキャラクターを、1人えらんでください。",
 
-document.body.style.background =
-  "linear-gradient(180deg, #fff7fb 0%, #f3f7ff 45%, #ffffff 100%)";
+    healthName: "けんこうタイプ",
+    healthDesc: "からだに気をつけているキャラ。歩いたり、水を飲んだりするのが好き。",
+    foodName: "たべるの大好きタイプ",
+    foodDesc: "おいしいものが大好き。おにぎりもお菓子もニコニコ食べちゃう。",
+    fashionName: "おしゃれタイプ",
+    fashionDesc: "服やアクセサリーが好き。今日のコーデを考えるのが楽しみ。",
 
-// キャラクター情報
-var characters = [
-  {
-    id: "health",
-    name: "けんこうタイプ",
-    description:
-      "からだに気をつけているキャラ。歩いたり、水を飲んだりするのが好き。",
-    image: "public/char/greenjoy.png"
+    nameLabel: "えらんだキャラクターに、名前をつけてください。",
+    namePlaceholder: "キャラクターの名前（12文字まで）",
+    yoroshikuneButton: "よろしくね！",
+
+    gameNote: "※この画面はテスト用です。あとで本物のゲーム画面と入れ替えます。"
   },
-  {
-    id: "food",
-    name: "たべるの大好きタイプ",
-    description:
-      "おいしいものが大好き。おにぎりもお菓子もニコニコ食べちゃう。",
-    image: "public/char/bluejoy.png"
-  },
-  {
-    id: "fashion",
-    name: "おしゃれタイプ",
-    description:
-      "服やアクセサリーが好き。今日のコーデを考えるのが楽しみ。",
-    // ピンクのキャラ画像
-    image: "public/char/pinkjoy.png"
+  en: {
+    title: "Osewa Battle",
+    introLead: "This game explores whether small everyday \"care\" tasks can feel fun when you do them with a character.",
+    introBody1: "The app is part of a research project that connects daily actions (walking, drinking water, getting dressed, etc.) with caring for a character.",
+    introBody2: "Your choices—such as which character you choose, what name you give, and which care tasks you select—may be analysed later, but no personally identifiable information will be collected.",
+    introBody3: "If you agree with this, please press the “Start game” button.",
+    startButton: "Start game",
+
+    charTitle: "Choose your care character",
+    charLead: "Pick one character to take care of together.",
+
+    healthName: "Health type",
+    healthDesc: "Cares about body condition. Likes walking and drinking water.",
+    foodName: "Food lover type",
+    foodDesc: "Loves tasty food. Rice balls and snacks both make them happy.",
+    fashionName: "Fashion type",
+    fashionDesc: "Loves clothes and accessories. Enjoys choosing today’s outfit.",
+
+    nameLabel: "Give a name to your character.",
+    namePlaceholder: "Character name (up to 12 letters)",
+    yoroshikuneButton: "Let’s go!",
+
+    gameNote: "※This is a temporary test screen. It will be replaced with the real game screen later."
   }
-];
+};
 
-// root 要素を取得
-var root = document.getElementById("root");
+let currentLang = localStorage.getItem("osewa_lang") || "ja";
 
-if (!root) {
-  alert("root が見つかりません");
-} else {
-  // 画面全体コンテナ
-  var container = document.createElement("div");
-  container.style.maxWidth = "980px";
-  container.style.margin = "0 auto";
-  container.style.padding = "32px 20px 40px";
-  container.style.minHeight = "100vh";
-  container.style.boxSizing = "border-box";
+document.addEventListener("DOMContentLoaded", () => {
+  const introScreen = document.getElementById("intro-screen");
+  const charScreen = document.getElementById("char-screen");
+  const gameScreen = document.getElementById("game-screen");
 
-  // タイトル部分
-  var headerCard = document.createElement("div");
-  headerCard.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
-  headerCard.style.borderRadius = "24px";
-  headerCard.style.padding = "24px 16px";
-  headerCard.style.boxShadow = "0 8px 24px rgba(0,0,0,0.06)";
-  headerCard.style.marginBottom = "24px";
-  headerCard.style.textAlign = "center";
+  const startButton = document.getElementById("start-button");
+  const langButtons = document.querySelectorAll(".lang-button");
 
-  var title = document.createElement("h1");
-  title.textContent = "お世話合戦 キャラクターをえらぶ";
-  title.style.margin = "0 0 8px 0";
-  title.style.fontSize = "1.8rem";
+  const characterCards = document.querySelectorAll(".character-card");
+  const nameArea = document.getElementById("name-area");
+  const nameInput = document.getElementById("pet-name-input");
+  const yoroshikuneButton = document.getElementById("yoroshikune-button");
 
-  var intro = document.createElement("p");
-  intro.textContent =
-    "いっしょにお世話をしていくキャラクターを、1人えらんでください。";
-  intro.style.margin = "0";
-  intro.style.fontSize = "0.95rem";
-  intro.style.color = "#555";
+  const gameTitle = document.getElementById("game-title");
+  const gameMessage = document.getElementById("game-message");
 
-  headerCard.appendChild(title);
-  headerCard.appendChild(intro);
+  let selectedCharacterId = null;
 
-  // カードを包む部分
-  var gridWrapper = document.createElement("div");
-  gridWrapper.style.backgroundColor = "rgba(255, 255, 255, 0.95)";
-  gridWrapper.style.borderRadius = "24px";
-  gridWrapper.style.padding = "20px";
-  gridWrapper.style.boxShadow = "0 10px 30px rgba(0,0,0,0.08)";
+  // 言語適用
+  function applyTranslations() {
+    const dict = translations[currentLang] || translations.ja;
 
-  var grid = document.createElement("div");
-  grid.style.display = "grid";
-  grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(240px, 1fr))";
-  grid.style.gap = "16px";
+    document.title = dict.title || "お世話合戦";
 
-  // キャラカードを並べる
-  for (var i = 0; i < characters.length; i++) {
-    (function () {
-      var chara = characters[i];
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const key = el.getAttribute("data-i18n");
+      if (dict[key]) {
+        el.textContent = dict[key];
+      }
+    });
 
-      var card = document.createElement("button");
-      card.style.display = "flex";
-      card.style.flexDirection = "column";
-      card.style.alignItems = "center";
-      card.style.padding = "18px 16px 20px";
-      card.style.borderRadius = "20px";
-      card.style.border = "1px solid #f0e8ff";
-      card.style.background =
-        "radial-gradient(circle at top, #fdf5ff 0, #ffffff 55%)";
-      card.style.cursor = "pointer";
-      card.style.boxShadow = "0 3px 10px rgba(0,0,0,0.04)";
-      card.style.transition =
-        "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease";
+    document.querySelectorAll("[data-i18n-label]").forEach((el) => {
+      const key = el.getAttribute("data-i18n-label");
+      if (dict[key]) {
+        el.textContent = dict[key];
+      }
+    });
 
-      card.onmouseenter = function () {
-        this.style.transform = "translateY(-3px)";
-        this.style.boxShadow = "0 8px 18px rgba(0,0,0,0.12)";
-        this.style.borderColor = "#d8c2ff";
-      };
-      card.onmouseleave = function () {
-        this.style.transform = "none";
-        this.style.boxShadow = "0 3px 10px rgba(0,0,0,0.04)";
-        this.style.borderColor = "#f0e8ff";
-      };
-
-      var img = document.createElement("img");
-      img.src = chara.image;
-      img.alt = chara.name;
-      img.style.width = "120px";
-      img.style.height = "120px";
-      img.style.objectFit = "contain";
-      img.style.marginBottom = "8px";
-      img.style.borderRadius = "50%";
-      img.style.backgroundColor = "#fff";
-      img.style.padding = "8px";
-
-      var nameEl = document.createElement("h2");
-      nameEl.textContent = chara.name;
-      nameEl.style.fontSize = "1.1rem";
-      nameEl.style.margin = "8px 0 4px 0";
-
-      var descEl = document.createElement("p");
-      descEl.textContent = chara.description;
-      descEl.style.fontSize = "0.88rem";
-      descEl.style.textAlign = "center";
-      descEl.style.margin = "0";
-      descEl.style.color = "#444";
-
-      card.appendChild(img);
-      card.appendChild(nameEl);
-      card.appendChild(descEl);
-
-      // クリック時の動き
-      card.addEventListener("click", function () {
-        localStorage.setItem("osewa_selectedCharacter", JSON.stringify(chara));
-        alert("「" + chara.name + "」をえらびました！");
-        // ここで次の画面に飛ばすこともできます
-        // window.location.href = "stage1.html";
-      });
-
-      grid.appendChild(card);
-    })();
+    document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+      const key = el.getAttribute("data-i18n-placeholder");
+      if (dict[key]) {
+        el.placeholder = dict[key];
+      }
+    });
   }
 
-  gridWrapper.appendChild(grid);
-  container.appendChild(headerCard);
-  container.appendChild(gridWrapper);
+  function updateLangButtons() {
+    langButtons.forEach((btn) => {
+      if (btn.dataset.lang === currentLang) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+  }
 
-  root.innerHTML = "";
-  root.appendChild(container);
-}
+  // 初期表示
+  updateLangButtons();
+  applyTranslations();
+
+  // 言語切り替え
+  langButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const lang = btn.dataset.lang;
+      if (!translations[lang]) return;
+      currentLang = lang;
+      localStorage.setItem("osewa_lang", currentLang);
+      updateLangButtons();
+      applyTranslations();
+    });
+  });
+
+  // スタートボタン：説明 → キャラ選択へ
+  startButton.addEventListener("click", () => {
+    introScreen.classList.add("hidden");
+    charScreen.classList.remove("hidden");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // キャラ選択
+  characterCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      characterCards.forEach((c) => c.classList.remove("selected"));
+      card.classList.add("selected");
+      selectedCharacterId = card.dataset.id;
+      nameArea.classList.remove("hidden");
+      updateYoroshikuneButton();
+    });
+  });
+
+  // 名前入力でボタンの有効/無効を切り替え
+  nameInput.addEventListener("input", () => {
+    updateYoroshikuneButton();
+  });
+
+  function updateYoroshikuneButton() {
+    const hasName = nameInput.value.trim().length > 0;
+    if (selectedCharacterId && hasName) {
+      yoroshikuneButton.disabled = false;
+    } else {
+      yoroshikuneButton.disabled = true;
+    }
+  }
+
+  // 「よろしくね！」でゲーム開始
+  yoroshikuneButton.addEventListener("click", () => {
+    const name = nameInput.value.trim();
+    if (!name || !selectedCharacterId) return;
+
+    // ローカルストレージに保存（あとでゲーム本体でも使えるように）
+    localStorage.setItem("osewa_character_id", selectedCharacterId);
+    localStorage.setItem("osewa_character_name", name);
+    localStorage.setItem("osewa_lang", currentLang);
+
+    // ここで別ページに飛ばす場合は、下の2行の代わりに
+    // window.location.href = "osewa_game.html"; などにしてもOKです。
+    charScreen.classList.add("hidden");
+    gameScreen.classList.remove("hidden");
+
+    if (currentLang === "ja") {
+      gameTitle.textContent = `${name}とのお世話合戦、スタート！`;
+      gameMessage.textContent =
+        "これから先は、あなたの生活とつながる「お世話クエスト」がはじまります。この画面はテスト用なので、あとで本物のゲーム画面に差し替えてください。";
+    } else {
+      gameTitle.textContent = `Osewa Battle with ${name} starts!`;
+      gameMessage.textContent =
+        "From here, your daily life will be linked with care quests. This is a temporary test screen, so please replace it with the real game screen later.";
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+});
