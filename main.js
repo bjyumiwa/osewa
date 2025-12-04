@@ -61,6 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const yoroshikuneButton = document.getElementById("yoroshikune-button");
 
   let selectedCharacterId = null;
+  let selectedCharacterImage = null; // ★ 追加：画像パスを保持
 
   // 言語適用
   function applyTranslations() {
@@ -128,7 +129,11 @@ document.addEventListener("DOMContentLoaded", () => {
     card.addEventListener("click", () => {
       characterCards.forEach((c) => c.classList.remove("selected"));
       card.classList.add("selected");
+
       selectedCharacterId = card.dataset.id;
+      const img = card.querySelector("img");
+      selectedCharacterImage = img ? img.getAttribute("src") : null; // ★ ここで画像パスを取得
+
       nameArea.classList.remove("hidden");
       updateYoroshikuneButton();
     });
@@ -157,6 +162,11 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("osewa_character_id", selectedCharacterId);
     localStorage.setItem("osewa_character_name", name);
     localStorage.setItem("osewa_lang", currentLang);
+
+    // ★ ここで画像パスも保存
+    if (selectedCharacterImage) {
+      localStorage.setItem("osewa_character_image", selectedCharacterImage);
+    }
 
     // 別ページへ
     window.location.href = "osewa_game.html";
