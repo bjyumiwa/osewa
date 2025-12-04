@@ -1,76 +1,132 @@
 // main.js
 
-// 1. キャラクターの情報（画像パスはあとで好きに変えてOK）
+// =====================
+// 背景と全体のスタイル
+// =====================
+document.body.style.margin = "0";
+document.body.style.minHeight = "100vh";
+document.body.style.fontFamily =
+  "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+
+// やわらかいグラデーション背景
+document.body.style.background =
+  "linear-gradient(180deg, #fff7fb 0%, #f3f7ff 45%, #ffffff 100%)";
+
+// =====================
+// 1. キャラクター情報
+// =====================
+// 画像のパスはプロジェクトルールに合わせて
+// すべて「public/」から始めています。
 const characters = [
   {
     id: "health",
     name: "けんこうタイプ",
-    description: "からだに気をつけているキャラ。歩いたり、水を飲んだりするのが好き。",
-    image: "./char/health.png", // ここは実際の画像ファイル名に合わせて変えてください
+    description:
+      "からだに気をつけているキャラ。歩いたり、水を飲んだりするのが好き。",
+    // 元気そうなグリーンの笑顔
+    image: "public/char/greenjoy.png",
   },
   {
     id: "food",
     name: "たべるの大好きタイプ",
-    description: "おいしいものが大好き。おにぎりもお菓子もニコニコ食べちゃう。",
-    image: "./char/food.png",
+    description:
+      "おいしいものが大好き。おにぎりもお菓子もニコニコ食べちゃう。",
+    // もぐもぐ楽しそうなブルーの笑顔（仮）
+    image: "public/char/bluejoy.png",
   },
   {
     id: "fashion",
     name: "おしゃれタイプ",
     description: "服やアクセサリーが好き。今日のコーデを考えるのが楽しみ。",
-    image: "./char/fashion.png",
+    // ちょっと落ち着いたブルーの calm 表情を採用
+    image: "public/char/bluecalm.png",
   },
 ];
 
+// =====================
 // 2. ルート要素を取得
+// =====================
 const root = document.getElementById("root");
 
-// 3. 画面全体のコンテナをつくる
+// =====================
+// 3. 画面全体のコンテナ
+// =====================
 const container = document.createElement("div");
-container.style.maxWidth = "900px";
+container.style.maxWidth = "980px";
 container.style.margin = "0 auto";
-container.style.padding = "20px";
-container.style.fontFamily = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+container.style.padding = "32px 20px 40px";
+container.style.minHeight = "100vh";
+container.style.boxSizing = "border-box";
+
+// ---------------------
+// 上部タイトルカード
+// ---------------------
+const headerCard = document.createElement("div");
+headerCard.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+headerCard.style.borderRadius = "24px";
+headerCard.style.padding = "24px 16px";
+headerCard.style.boxShadow = "0 8px 24px rgba(0,0,0,0.06)";
+headerCard.style.marginBottom = "24px";
+headerCard.style.textAlign = "center";
 
 // タイトル
 const title = document.createElement("h1");
 title.textContent = "お世話合戦 キャラクターをえらぶ";
-title.style.textAlign = "center";
-title.style.marginBottom = "10px";
+title.style.margin = "0 0 8px 0";
+title.style.fontSize = "1.8rem";
 
-// 説明
+// サブタイトル
 const intro = document.createElement("p");
-intro.textContent = "いっしょにお世話をしていくキャラクターを、1人えらんでください。";
-intro.style.textAlign = "center";
-intro.style.marginBottom = "20px";
+intro.textContent =
+  "いっしょにお世話をしていくキャラクターを、1人えらんでください。";
+intro.style.margin = "0";
+intro.style.fontSize = "0.95rem";
+intro.style.color = "#555";
 
-// 4. キャラカードを並べるエリア
+headerCard.appendChild(title);
+headerCard.appendChild(intro);
+
+// =====================
+// 4. キャラカードエリア
+// =====================
+const gridWrapper = document.createElement("div");
+gridWrapper.style.backgroundColor = "rgba(255, 255, 255, 0.95)";
+gridWrapper.style.borderRadius = "24px";
+gridWrapper.style.padding = "20px";
+gridWrapper.style.boxShadow = "0 10px 30px rgba(0,0,0,0.08)";
+
 const grid = document.createElement("div");
 grid.style.display = "grid";
 grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(240px, 1fr))";
 grid.style.gap = "16px";
 
-// 5. キャラごとのカードを作成
+// ---------------------
+// 5. キャラカード作成
+// ---------------------
 characters.forEach((chara) => {
   const card = document.createElement("button");
   card.style.display = "flex";
   card.style.flexDirection = "column";
   card.style.alignItems = "center";
-  card.style.padding = "16px";
-  card.style.borderRadius = "16px";
-  card.style.border = "1px solid #ddd";
-  card.style.backgroundColor = "white";
+  card.style.padding = "18px 16px 20px";
+  card.style.borderRadius = "20px";
+  card.style.border = "1px solid #f0e8ff";
+  card.style.background =
+    "radial-gradient(circle at top, #fdf5ff 0, #ffffff 55%)";
   card.style.cursor = "pointer";
-  card.style.boxShadow = "0 2px 6px rgba(0,0,0,0.06)";
-  card.style.transition = "transform 0.15s ease, box-shadow 0.15s ease";
+  card.style.boxShadow = "0 3px 10px rgba(0,0,0,0.04)";
+  card.style.transition =
+    "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease";
 
   card.onmouseenter = () => {
-    card.style.transform = "translateY(-2px)";
-    card.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+    card.style.transform = "translateY(-3px)";
+    card.style.boxShadow = "0 8px 18px rgba(0,0,0,0.12)";
+    card.style.borderColor = "#d8c2ff";
   };
   card.onmouseleave = () => {
     card.style.transform = "none";
-    card.style.boxShadow = "0 2px 6px rgba(0,0,0,0.06)";
+    card.style.boxShadow = "0 3px 10px rgba(0,0,0,0.04)";
+    card.style.borderColor = "#f0e8ff";
   };
 
   // 画像
@@ -81,43 +137,50 @@ characters.forEach((chara) => {
   img.style.height = "120px";
   img.style.objectFit = "contain";
   img.style.marginBottom = "8px";
+  img.style.borderRadius = "50%";
+  img.style.backgroundColor = "#fff";
+  img.style.padding = "8px";
 
   // キャラ名
   const nameEl = document.createElement("h2");
   nameEl.textContent = chara.name;
-  nameEl.style.fontSize = "1.2rem";
-  nameEl.style.margin = "4px 0";
+  nameEl.style.fontSize = "1.1rem";
+  nameEl.style.margin = "8px 0 4px 0";
 
-  // 説明
+  // 説明文
   const descEl = document.createElement("p");
   descEl.textContent = chara.description;
-  descEl.style.fontSize = "0.9rem";
+  descEl.style.fontSize = "0.88rem";
   descEl.style.textAlign = "center";
-  descEl.style.margin = "4px 0 0 0";
+  descEl.style.margin = "0";
+  descEl.style.color = "#444";
 
-  // カードを組み立て
+  // カード組み立て
   card.appendChild(img);
   card.appendChild(nameEl);
   card.appendChild(descEl);
 
-  // クリックしたときの動き
+  // クリックしたとき
   card.addEventListener("click", () => {
     // 選んだキャラを localStorage に保存
     localStorage.setItem("osewa_selectedCharacter", JSON.stringify(chara));
 
-    // ひとまずアラートで確認（あとで次の画面に飛ばす形に変えられます）
+    // ひとまずアラートで確認（あとで画面遷移に変える）
     alert(`「${chara.name}」をえらびました！`);
 
-    // 次の画面を用意したら、ここで画面遷移させてもOKです
-    // 例: window.location.href = "./stage1.html";
+    // 例：次の画面を作ったらここで遷移
+    // window.location.href = "stage1.html";
   });
 
   grid.appendChild(card);
 });
 
-// 6. すべて root に追加
-container.appendChild(title);
-container.appendChild(intro);
-container.appendChild(grid);
-root.innerHTML = ""; // もし何か入っていたら消す
+// =====================
+// 6. 画面へ追加
+// =====================
+gridWrapper.appendChild(grid);
+container.appendChild(headerCard);
+container.appendChild(gridWrapper);
+
+root.innerHTML = "";
 root.appendChild(container);
