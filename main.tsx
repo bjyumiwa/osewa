@@ -1,7 +1,4 @@
-import OsewaGassen from './components/OsewaGassen';
+// main.js
+const root = document.getElementById("root");
 
-function App() {
-  return <OsewaGassen />;
-}
-
-export default App;
+root.textContent = "ここにキャラクター選択画面を作っていきます。";
