@@ -20,9 +20,7 @@ const translations = {
 
     nameLabel: "えらんだキャラクターに、名前をつけてください。",
     namePlaceholder: "キャラクターの名前（12文字まで）",
-    yoroshikuneButton: "よろしくね！",
-
-    gameNote: "※この画面はテスト用です。あとで本物のゲーム画面と入れ替えます。"
+    yoroshikuneButton: "よろしくね！"
   },
   en: {
     title: "Osewa Battle",
@@ -44,9 +42,7 @@ const translations = {
 
     nameLabel: "Give a name to your character.",
     namePlaceholder: "Character name (up to 12 letters)",
-    yoroshikuneButton: "Let’s go!",
-
-    gameNote: "※This is a temporary test screen. It will be replaced with the real game screen later."
+    yoroshikuneButton: "Let’s go!"
   }
 };
 
@@ -55,7 +51,6 @@ let currentLang = localStorage.getItem("osewa_lang") || "ja";
 document.addEventListener("DOMContentLoaded", () => {
   const introScreen = document.getElementById("intro-screen");
   const charScreen = document.getElementById("char-screen");
-  const gameScreen = document.getElementById("game-screen");
 
   const startButton = document.getElementById("start-button");
   const langButtons = document.querySelectorAll(".lang-button");
@@ -64,9 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const nameArea = document.getElementById("name-area");
   const nameInput = document.getElementById("pet-name-input");
   const yoroshikuneButton = document.getElementById("yoroshikune-button");
-
-  const gameTitle = document.getElementById("game-title");
-  const gameMessage = document.getElementById("game-message");
 
   let selectedCharacterId = null;
 
@@ -156,31 +148,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 「よろしくね！」でゲーム開始
+  // 「よろしくね！」で別ページへ遷移
   yoroshikuneButton.addEventListener("click", () => {
     const name = nameInput.value.trim();
     if (!name || !selectedCharacterId) return;
 
-    // ローカルストレージに保存（あとでゲーム本体でも使えるように）
+    // ローカルストレージに保存（ゲームページで使う）
     localStorage.setItem("osewa_character_id", selectedCharacterId);
     localStorage.setItem("osewa_character_name", name);
     localStorage.setItem("osewa_lang", currentLang);
 
-    // ここで別ページに飛ばす場合は、下の2行の代わりに
-    // window.location.href = "osewa_game.html"; などにしてもOKです。
-    charScreen.classList.add("hidden");
-    gameScreen.classList.remove("hidden");
-
-    if (currentLang === "ja") {
-      gameTitle.textContent = `${name}とのお世話合戦、スタート！`;
-      gameMessage.textContent =
-        "これから先は、あなたの生活とつながる「お世話クエスト」がはじまります。この画面はテスト用なので、あとで本物のゲーム画面に差し替えてください。";
-    } else {
-      gameTitle.textContent = `Osewa Battle with ${name} starts!`;
-      gameMessage.textContent =
-        "From here, your daily life will be linked with care quests. This is a temporary test screen, so please replace it with the real game screen later.";
-    }
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // 別ページへ
+    window.location.href = "osewa_game.html";
   });
 });
