@@ -31,7 +31,8 @@ const characters = [
     id: "fashion",
     name: "おしゃれタイプ",
     description: "服やアクセサリーが好き。今日のコーデを考えるのが楽しみ。",
-    image: "public/char/bluecalm.png",
+    // ★ ピンクのキャラ画像に変更
+    image: "public/char/pinkjoy.png",
   },
 ];
 
@@ -139,8 +140,7 @@ characters.forEach((chara) => {
   card.addEventListener("click", () => {
     localStorage.setItem("osewa_selectedCharacter", JSON.stringify(chara));
     alert(`「${chara.name}」をえらびました！`);
-    // ここで次の画面へ遷移させてもOK
-    // window.location.href = "stage1.html";
+    // window.location.href = "stage1.html"; // 次の画面ができたらここで遷移
   });
 
   grid.appendChild(card);
