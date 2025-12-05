@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const gameTranslations = {
     ja: {
       heroTitle: function (name) { return name + "とのお世話合戦"; },
-      heroSub: "毎日のちいさな行動を、キャラクターへの「お世話」としてえらんでいくミニゲームです。10この場面で、どんな1日になるか試してみましょう。",
+      heroSub: "毎日のちいさな行動を、キャラクターへの「お世話」としてえらんでいくミニゲームです。10この場面を通して、どんな1日になるか試してみましょう。",
       heartLabel: "ハート",
       roundIndicator: function (current, total) { return current + " / " + total; },
       heartBar: function (hearts) { return "いまのハート：" + hearts; },
@@ -247,6 +247,30 @@ document.addEventListener("DOMContentLoaded", function () {
       resultNote: "Logs may be used for research, but will not be stored in a personally identifiable way.",
       playAgain: "Play again",
       backToTop: "Choose another character"
+    }
+  };
+
+  // 「いいね」「ありがとう」などの短いコメント（吹き出し用）
+  const reactionTexts = {
+    ja: {
+      strong: {
+        main: "すごくうれしい！",
+        sub: "きょうのえらびかた、ばっちりかもしれませんね。"
+      },
+      soft: {
+        main: "いいね、ありがとう。",
+        sub: "なんだかごきげんそうです。"
+      }
+    },
+    en: {
+      strong: {
+        main: "I’m so happy!",
+        sub: "That choice feels perfect for today."
+      },
+      soft: {
+        main: "Nice, thank you!",
+        sub: "They look in a good mood."
+      }
     }
   };
 
@@ -354,6 +378,14 @@ document.addEventListener("DOMContentLoaded", function () {
     hearts += delta;
     updateStatusUI();
     nextButton.disabled = false;
+
+    // コメント（吹き出し用）
+    const langReactions = reactionTexts[currentLangGame] || reactionTexts.ja;
+    const key = delta >= 2 ? "strong" : "soft";
+    const reaction = langReactions[key];
+
+    reactionMain.textContent = reaction.main;
+    reactionSub.textContent = reaction.sub;
 
     choiceLog.push({
       round: currentRoundIndex + 1,
