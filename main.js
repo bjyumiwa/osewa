@@ -2,10 +2,14 @@
 const translations = {
   ja: {
     title: "お世話合戦",
-    introLead: "日常の「ちょっとめんどくさいお世話」を、キャラクターといっしょに楽しめるかを試すゲームです。",
-    introBody1: "このアプリは、生活の中の小さな行動（歩く、水を飲む、身だしなみを整えるなど）と、キャラクターへの「お世話」がつながるように設計された研究プロジェクトの一部です。",
-    introBody2: "どのキャラクターを選ぶか、どんな名前をつけるか、どのお世話を選ぶかといった記録は、あとでまとめて分析されます。個人が特定される情報は集めません。",
-    introBody3: "内容に同意してくれたら、「ゲームをはじめる」ボタンを押してスタートしてください。",
+    introLead:
+      "お世話合戦は、毎日のちいさな行動をキャラクターといっしょにえらびながら、自分の「お世話のしかた」をのぞいてみるミニゲームです。",
+    introBody1:
+      "このアプリは、生活の中のちいさな行動（歩く・食べる・着がえる・ひと休みする など）を、キャラクターへの「お世話」としてえらんでいくミニゲームです。",
+    introBody2:
+      "異なる性格をもったキャラクターに対して、日常に近いお世話行動をどのように選ぶのかを記録し、その選び方とキャラクターへの愛着の深まりを分析する研究プロジェクトの一部です。個人が特定される情報は集めません。",
+    introBody3:
+      "内容に同意してくれたら、「ゲームをはじめる」ボタンを押してスタートしてください。",
     startButton: "ゲームをはじめる",
 
     charTitle: "お世話合戦 キャラクターをえらぶ",
@@ -24,10 +28,14 @@ const translations = {
   },
   en: {
     title: "Osewa Battle",
-    introLead: "This game explores whether small everyday \"care\" tasks can feel fun when you do them with a character.",
-    introBody1: "The app is part of a research project that connects daily actions (walking, drinking water, getting dressed, etc.) with caring for a character.",
-    introBody2: "Your choices—such as which character you choose, what name you give, and which care tasks you select—may be analysed later, but no personally identifiable information will be collected.",
-    introBody3: "If you agree with this, please press the “Start game” button.",
+    introLead:
+      "Osewa Battle is a mini-game where you choose small everyday actions together with a character and take a look at your own style of “caring”.",
+    introBody1:
+      "In this app, small everyday actions (walking, eating, getting dressed, taking a short break, etc.) are turned into “care” choices for your character.",
+    introBody2:
+      "It is part of a research project that records how you choose care actions close to daily life for characters with different personalities, and analyses how these choices relate to the growth of attachment to the character. No personally identifiable information is collected.",
+    introBody3:
+      "If you agree with this, please press the “Start game” button to begin.",
     startButton: "Start game",
 
     charTitle: "Choose your care character",
@@ -120,6 +128,15 @@ document.addEventListener("DOMContentLoaded", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
+  function updateYoroshikuneButton() {
+    const hasName = nameInput.value.trim().length > 0;
+    if (selectedCharacterId && hasName) {
+      yoroshikuneButton.disabled = false;
+    } else {
+      yoroshikuneButton.disabled = true;
+    }
+  }
+
   characterCards.forEach((card) => {
     card.addEventListener("click", () => {
       characterCards.forEach((c) => c.classList.remove("selected"));
@@ -137,15 +154,6 @@ document.addEventListener("DOMContentLoaded", () => {
   nameInput.addEventListener("input", () => {
     updateYoroshikuneButton();
   });
-
-  function updateYoroshikuneButton() {
-    const hasName = nameInput.value.trim().length > 0;
-    if (selectedCharacterId && hasName) {
-      yoroshikuneButton.disabled = false;
-    } else {
-      yoroshikuneButton.disabled = true;
-    }
-  }
 
   yoroshikuneButton.addEventListener("click", () => {
     const name = nameInput.value.trim();
