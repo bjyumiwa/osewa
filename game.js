@@ -1,4 +1,4 @@
-// ゲーム全体のシーン数
+// 1プレイあたりのシーン数
 const TOTAL_ROUNDS = 10;
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -63,35 +63,35 @@ document.addEventListener("DOMContentLoaded", function () {
     fashion: { ja: "おしゃれタイプ", en: "Fashion type" }
   };
 
-  // シーン定義
+  // 10個のシーン定義
   const scenePool = [
     {
-      id: "morning_clothes",
-      titleJa: "朝：きょうの服をえらぶ",
-      descJa: "どちらの服を着せる？",
-      titleEn: "Morning: Choose today’s clothes",
-      descEn: "Which outfit will you put on?",
-      options: [
-        { id: "comfy", icon: "🩳", labelJa: "動きやすい服", labelEn: "Comfy clothes" },
-        { id: "cute", icon: "👗", labelJa: "かわいい服", labelEn: "Cute outfit" }
-      ]
-    },
-    {
       id: "meal",
-      titleJa: "昼：ごはんをえらぶ",
-      descJa: "どちらを食べさせる？",
+      titleJa: "ごはんをえらぶ",
+      descJa: "きょうのメインはどっち？",
       titleEn: "Meal: Choose food",
-      descEn: "Which will you let them eat?",
+      descEn: "What will be today’s main?",
       options: [
         { id: "onigiri", icon: "🍙", labelJa: "おにぎり", labelEn: "Rice ball" },
         { id: "snack", icon: "🍪", labelJa: "お菓子", labelEn: "Snacks" }
       ]
     },
     {
-      id: "outing",
-      titleJa: "外出：出かけかたをえらぶ",
+      id: "clothes",
+      titleJa: "出かける服をえらぶ",
+      descJa: "どんな服で出かけよう？",
+      titleEn: "Clothes: Going-out outfit",
+      descEn: "What will they wear today?",
+      options: [
+        { id: "comfy", icon: "🩳", labelJa: "うごきやすい服", labelEn: "Comfy clothes" },
+        { id: "cute", icon: "👗", labelJa: "かわいい服", labelEn: "Cute outfit" }
+      ]
+    },
+    {
+      id: "transport",
+      titleJa: "お出かけの手段",
       descJa: "どうやって行こう？",
-      titleEn: "Going out: Choose how to go",
+      titleEn: "Going out: How to go",
       descEn: "How will you go?",
       options: [
         { id: "walk", icon: "🚶", labelJa: "歩いて行く", labelEn: "Walk" },
@@ -99,58 +99,136 @@ document.addEventListener("DOMContentLoaded", function () {
       ]
     },
     {
-      id: "shopping",
-      titleJa: "買い物：どっちを買う？",
-      descJa: "今日はどちらをプレゼントする？",
-      titleEn: "Shopping: What to buy?",
-      descEn: "Which will you gift today?",
+      id: "accessory",
+      titleJa: "アクセサリーをえらぶ",
+      descJa: "きょうのポイントアイテムは？",
+      titleEn: "Accessory: Choose an item",
+      descEn: "Which accessory will you choose?",
       options: [
-        { id: "book", icon: "📘", labelJa: "本", labelEn: "Book" },
+        { id: "hat", icon: "👒", labelJa: "ぼうし", labelEn: "Hat" },
         { id: "ring", icon: "💍", labelJa: "指輪", labelEn: "Ring" }
+      ]
+    },
+    {
+      id: "drink",
+      titleJa: "のみものをえらぶ",
+      descJa: "ひと休みの一杯はどっち？",
+      titleEn: "Drink: Choose a drink",
+      descEn: "What will they drink?",
+      options: [
+        { id: "water", icon: "💧", labelJa: "お水", labelEn: "Water" },
+        { id: "juice", icon: "🥤", labelJa: "ジュース", labelEn: "Juice" }
+      ]
+    },
+    {
+      id: "snack_time",
+      titleJa: "おやつタイム",
+      descJa: "きょうのおやつは？",
+      titleEn: "Snack time",
+      descEn: "What will today’s snack be?",
+      options: [
+        { id: "fruit", icon: "🍎", labelJa: "フルーツ", labelEn: "Fruit" },
+        { id: "cake", icon: "🍰", labelJa: "ケーキ", labelEn: "Cake" }
+      ]
+    },
+    {
+      id: "rest",
+      titleJa: "休み方をえらぶ",
+      descJa: "どんなふうにひと休みする？",
+      titleEn: "Rest: How to take a break",
+      descEn: "How will they rest?",
+      options: [
+        { id: "stretch", icon: "🤸", labelJa: "ストレッチ", labelEn: "Stretch" },
+        { id: "sofa", icon: "🛋️", labelJa: "ごろごろタイム", labelEn: "Chill on sofa" }
+      ]
+    },
+    {
+      id: "destination",
+      titleJa: "お出かけ先をえらぶ",
+      descJa: "きょうはどこに行く？",
+      titleEn: "Destination: Where to go",
+      descEn: "Where will you go today?",
+      options: [
+        { id: "park", icon: "🌳", labelJa: "こうえん", labelEn: "Park" },
+        { id: "restaurant", icon: "🍽️", labelJa: "ファミレス", labelEn: "Family restaurant" }
+      ]
+    },
+    {
+      id: "room",
+      titleJa: "お部屋のちょっとしたお世話",
+      descJa: "どこからととのえる？",
+      titleEn: "Room care",
+      descEn: "What will you tidy up?",
+      options: [
+        { id: "desk", icon: "🪑", labelJa: "机をかたづける", labelEn: "Tidy desk" },
+        { id: "clothes", icon: "👚", labelJa: "服をかける", labelEn: "Hang clothes" }
+      ]
+    },
+    {
+      id: "night",
+      titleJa: "ねる前のひと工夫",
+      descJa: "ねる前にどっちをする？",
+      titleEn: "Before sleep",
+      descEn: "What will they do before bed?",
+      options: [
+        { id: "night_stretch", icon: "🧘", labelJa: "ねる前ストレッチ", labelEn: "Stretch before bed" },
+        { id: "late_snack", icon: "🍮", labelJa: "夜食タイム", labelEn: "Late-night snack" }
       ]
     }
   ];
 
-  // キャラごとの好み
-  const preferenceMap = {
+  // キャラごとの「ハートの増え方」マップ
+  // どの選択でも最低 +1、性格に合うと +2
+  const pointMap = {
     health: {
-      morning_clothes: { comfy: "good", cute: "ok" },
-      meal: { onigiri: "good", snack: "bad" },
-      outing: { walk: "good", ride: "bad" },
-      shopping: { book: "good", ring: "ok" }
+      meal:        { onigiri: 2, snack: 1 },
+      clothes:     { comfy: 2,   cute: 1 },
+      transport:   { walk: 2,    ride: 1 },
+      accessory:   { hat: 1,     ring: 1 },
+      drink:       { water: 2,   juice: 1 },
+      snack_time:  { fruit: 2,   cake: 1 },
+      rest:        { stretch: 2, sofa: 1 },
+      destination: { park: 2,    restaurant: 1 },
+      room:        { desk: 2,    clothes: 2 },
+      night:       { night_stretch: 2, late_snack: 1 }
     },
     food: {
-      morning_clothes: { comfy: "ok", cute: "ok" },
-      meal: { onigiri: "ok", snack: "good" },
-      outing: { walk: "ok", ride: "good" },
-      shopping: { book: "ok", ring: "ok" }
+      meal:        { onigiri: 1, snack: 2 },
+      clothes:     { comfy: 1,   cute: 1 },
+      transport:   { walk: 1,    ride: 2 },
+      accessory:   { hat: 1,     ring: 1 },
+      drink:       { water: 1,   juice: 2 },
+      snack_time:  { fruit: 1,   cake: 2 },
+      rest:        { stretch: 1, sofa: 2 },
+      destination: { park: 1,    restaurant: 2 },
+      room:        { desk: 1,    clothes: 1 },
+      night:       { night_stretch: 1, late_snack: 2 }
     },
     fashion: {
-      morning_clothes: { comfy: "ok", cute: "good" },
-      meal: { onigiri: "ok", snack: "ok" },
-      outing: { walk: "ok", ride: "ok" },
-      shopping: { book: "bad", ring: "good" }
+      meal:        { onigiri: 1, snack: 1 },
+      clothes:     { comfy: 1,   cute: 2 },
+      transport:   { walk: 1,    ride: 1 },
+      accessory:   { hat: 2,     ring: 2 },
+      drink:       { water: 1,   juice: 1 },
+      snack_time:  { fruit: 1,   cake: 1 },
+      rest:        { stretch: 1, sofa: 1 },
+      destination: { park: 1,    restaurant: 2 },
+      room:        { desk: 1,    clothes: 2 },
+      night:       { night_stretch: 2, late_snack: 1 }
     }
-  };
-
-  // リアクション
-  const reactionProfiles = {
-    good: { delta: 2, jaMain: "大よろこび！", jaSub: "とっても満足そう。", enMain: "Delighted!", enSub: "They look really happy." },
-    ok:   { delta: 1, jaMain: "うれしそう。", jaSub: "いい感じのお世話かもしれませんね。", enMain: "Looks happy.", enSub: "Seems like a nice choice." },
-    bad:  { delta: 0, jaMain: "ちょっとがっかり…", jaSub: "次は好みに合わせてみてもいいかもしれません。", enMain: "A little disappointed...", enSub: "Maybe try their taste next time." }
   };
 
   // 画面テキスト
   const gameTranslations = {
     ja: {
       heroTitle: function (name) { return name + "とのお世話合戦"; },
-      heroSub: "10シーン分のお世話をえらんで、どれだけハートを集められるか試してみましょう。",
+      heroSub: "毎日のちいさな行動を、キャラクターへの「お世話」としてえらんでいくミニゲームです。10この場面で、どんな1日になるか試してみましょう。",
       heartLabel: "ハート",
       roundIndicator: function (current, total) { return current + " / " + total; },
       heartBar: function (hearts) { return "いまのハート：" + hearts; },
       nextButton: "つぎへ",
       resultTitle: function (name) { return name + "との1日のミニ版が終わりました。"; },
-      resultSummary: "このキャラクターにとって「うれしいお世話」はどんな選択だったでしょうか。自分の好みとキャラの好みが食い違った場面も、あとで少し振り返ってみてもおもしろいかもしれませんね。",
+      resultSummary: "このキャラクターにとって「うれしいお世話」はどんな選択だったでしょうか。自分の選び方のくせや、キャラとのちがいに気づいたら、あとで少しメモしてみてもおもしろいかもしれませんね。",
       resultHearts: function (hearts) { return "今日あつまったハート：" + hearts + " コ"; },
       resultNote: "※この記録は研究用ログとして活用される予定です（個人が特定される形では保存されません）。",
       playAgain: "もう一度あそぶ",
@@ -158,13 +236,13 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     en: {
       heroTitle: function (name) { return "Osewa Battle with " + name; },
-      heroSub: "Make 10 small care choices and see how many hearts you can collect.",
+      heroSub: "This mini-game lets you turn small everyday actions into “care” for your character. Make 10 choices and see what kind of day it becomes.",
       heartLabel: "Hearts",
       roundIndicator: function (current, total) { return current + " / " + total; },
       heartBar: function (hearts) { return "Current hearts: " + hearts; },
       nextButton: "Next",
       resultTitle: function (name) { return "Your mini-day with " + name + " is over."; },
-      resultSummary: "Which choices became “good care” for this character? It might be interesting to reflect later on the moments when your own preference differed from theirs.",
+      resultSummary: "Which choices felt like “good care” for this character? Noticing the gaps between your preferences and theirs might be an interesting reflection.",
       resultHearts: function (hearts) { return "Hearts collected today: " + hearts; },
       resultNote: "Logs may be used for research, but will not be stored in a personally identifiable way.",
       playAgain: "Play again",
@@ -177,11 +255,8 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentRoundIndex = 0;
   const choiceLog = [];
 
-  // シーン列（4つをぐるぐる回して10回ぶん）
-  const rounds = [];
-  for (let i = 0; i < TOTAL_ROUNDS; i++) {
-    rounds.push(scenePool[i % scenePool.length]);
-  }
+  // 10シーンをそのまま順番に
+  const rounds = scenePool.slice(0, TOTAL_ROUNDS);
 
   // キャラ表示
   if (characterImage) {
@@ -258,7 +333,7 @@ document.addEventListener("DOMContentLoaded", function () {
     resultHearts.textContent = dict.resultHearts(hearts);
     resultNote.textContent = dict.resultNote;
 
-    // ログを保存（必要ならあとで取り出せる）
+    // ログを保存
     const sessionData = {
       characterId: characterId,
       characterName: characterName,
@@ -271,18 +346,12 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleChoice(optionIndex) {
     const scene = rounds[currentRoundIndex];
     const choice = scene.options[optionIndex];
-    const prefsByScene = preferenceMap[characterId] || {};
-    const prefs = prefsByScene[scene.id] || {};
-    const prefKey = prefs[choice.id] || "ok";
-    const profile = reactionProfiles[prefKey] || reactionProfiles.ok;
-    const dict = getDict();
-    const isJa = currentLangGame === "ja";
 
-    hearts += profile.delta;
+    const charPoints = pointMap[characterId] || {};
+    const scenePoints = charPoints[scene.id] || {};
+    const delta = scenePoints[choice.id] || 1; // どの選択でも最低 1
 
-    reactionMain.textContent = isJa ? profile.jaMain : profile.enMain;
-    reactionSub.textContent = isJa ? profile.jaSub : profile.enSub;
-
+    hearts += delta;
     updateStatusUI();
     nextButton.disabled = false;
 
@@ -290,8 +359,7 @@ document.addEventListener("DOMContentLoaded", function () {
       round: currentRoundIndex + 1,
       sceneId: scene.id,
       optionId: choice.id,
-      preference: prefKey,
-      delta: profile.delta,
+      delta: delta,
       totalHearts: hearts,
       timestamp: new Date().toISOString()
     });
