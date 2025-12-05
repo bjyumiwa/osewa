@@ -255,21 +255,21 @@ document.addEventListener("DOMContentLoaded", function () {
     ja: {
       strong: {
         main: "すごくうれしい！",
-        sub: "きょうのえらびかた、ばっちりかもしれませんね。"
+        sub: "ありがとう"
       },
       soft: {
         main: "いいね、ありがとう。",
-        sub: "なんだかごきげんそうです。"
+        sub: "とってもハッピー"
       }
     },
     en: {
       strong: {
         main: "I’m so happy!",
-        sub: "That choice feels perfect for today."
+        sub: "thank you!."
       },
       soft: {
         main: "Nice, thank you!",
-        sub: "They look in a good mood."
+        sub: "I’m so happy!"
       }
     }
   };
