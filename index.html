@@ -70,21 +70,79 @@
       border-radius: 12px;
       padding: 16px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-top: 12px;
     }
     .screen.active {
       display: block;
     }
 
+    /* 大きなキャラ表示 */
+    .char-visual {
+      margin: 12px auto 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .char-visual-inner {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #fff, #ffd9ec);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      overflow: hidden;
+      transform-origin: center center;
+    }
+    .char-visual-inner img {
+      width: 78%;
+      height: 78%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+    .char-visual-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .char-visual-tag {
+      font-size: 11px;
+      color: #777;
+    }
+    .hidden {
+      display: none;
+    }
+
+    /* キャラアニメーション */
+    @keyframes char-bounce {
+      0%   { transform: translateY(0); }
+      20%  { transform: translateY(-10px); }
+      40%  { transform: translateY(0); }
+      60%  { transform: translateY(-6px); }
+      100% { transform: translateY(0); }
+    }
+    @keyframes char-spin {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .char-happy {
+      animation: char-bounce 0.4s ease-out;
+    }
+    .char-spin {
+      animation: char-spin 0.6s ease-out;
+    }
+
     .char-list {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 12px;
       margin-top: 8px;
     }
 
     .char-card {
-      border-radius: 12px;
-      padding: 12px;
+      border-radius: 16px;
+      padding: 10px;
       background: #fafafa;
       border: 2px solid transparent;
       cursor: pointer;
@@ -102,9 +160,9 @@
       box-shadow: 0 0 0 2px rgba(255,122,162,0.15);
       background: #fff7fb;
     }
-    .char-icon {
-      width: 56px;
-      height: 56px;
+    .char-icon-small {
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
       background: #eee;
       display: flex;
@@ -113,7 +171,7 @@
       overflow: hidden;
       flex-shrink: 0;
     }
-    .char-icon img {
+    .char-icon-small img {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -121,10 +179,16 @@
     .char-info-title {
       font-weight: 700;
       margin-bottom: 4px;
+      font-size: 14px;
     }
     .char-info-desc {
       font-size: 12px;
       color: #555;
+      margin-bottom: 2px;
+    }
+    .char-info-tag {
+      font-size: 11px;
+      color: #888;
     }
 
     .bubble {
@@ -157,7 +221,6 @@
       font-size: 12px;
       color: #777;
     }
-
     .scene-title {
       font-size: 17px;
       font-weight: 700;
@@ -174,22 +237,23 @@
       padding: 0;
       margin: 0;
       display: grid;
-      gap: 8px;
+      gap: 10px;
     }
     .choice-item {
-      border-radius: 10px;
-      padding: 8px 10px;
+      border-radius: 14px;
+      padding: 10px 12px;
       border: 1px solid #ddd;
       background: #fafafa;
       display: flex;
       align-items: flex-start;
       gap: 8px;
       cursor: pointer;
-      transition: background 0.1s ease, border-color 0.1s ease;
+      transition: background 0.1s ease, border-color 0.1s ease, transform 0.05s ease;
     }
     .choice-item:hover {
       background: #fff;
       border-color: #ffb3cb;
+      transform: translateY(-1px);
     }
     .choice-item input[type="radio"] {
       margin-top: 4px;
@@ -270,11 +334,15 @@
       background: #fafafa;
       font-size: 12px;
       cursor: pointer;
-      transition: background 0.1s ease, border-color 0.1s ease;
+      transition: background 0.1s ease, border-color 0.1s ease, transform 0.05s ease;
+    }
+    .log-btn:hover {
+      background: #fff;
     }
     .log-btn.selected {
       border-color: #ff7aa2;
       background: #ffe4ef;
+      transform: translateY(-1px);
     }
 
     .summary-box {
@@ -322,6 +390,15 @@
   </header>
 
   <div id="app">
+    <!-- 大きいキャラ表示（ゲーム画面用） -->
+    <div id="char-visual" class="char-visual hidden">
+      <div id="char-visual-inner" class="char-visual-inner">
+        <img id="char-visual-img" src="" alt="キャラ" />
+      </div>
+      <div id="char-visual-name" class="char-visual-name"></div>
+      <div id="char-visual-tag" class="char-visual-tag"></div>
+    </div>
+
     <!-- スタート画面：キャラクター選択 -->
     <section id="screen-start" class="screen active">
       <h2>1. お世話キャラをえらぶ</h2>
@@ -342,15 +419,12 @@
       </div>
     </section>
 
-    <!-- シーン画面：朝・放課後・寝る前の選択 -->
+    <!-- シーン画面：朝・放課後・寝る前の2択 -->
     <section id="screen-scenes" class="screen">
       <div class="scene-header">
         <div>
           <div class="scene-step" id="scene-step-label">シーン 1 / 3</div>
           <div class="scene-title" id="scene-title"></div>
-        </div>
-        <div style="font-size:12px; color:#777;" id="active-char-name">
-          <!-- キャラ名 -->
         </div>
       </div>
 
@@ -418,32 +492,35 @@
   </div>
 
   <script>
-    // ここが「お世話合戦」のときと同じ形のキャラ定義部分です
+    // 3色キャラ（ピンク・ブルー・グリーン）
     const characters = [
       {
-        id: "health",
-        name: "けんこうタイプ",
-        description: "からだに気をつけているキャラ。歩いたり、水を飲んだりするのが好き。",
-        image: "public/char/health.png",
-        tag: "からだのお世話"
+        id: "pink",
+        name: "ピンクタイプ",
+        description: "じぶんらしさやおしゃれのお世話がとくい。気分をアゲるのが好き。",
+        image: "public/char/pinkjoy.png",
+        tag: "じぶんらしさのお世話",
+        themeColor: "#ff9ecb"
       },
       {
-        id: "food",
-        name: "グルメタイプ",
-        description: "食べることが大好きなキャラ。ごほうびおやつや食事の時間をだいじにする。",
-        image: "public/char/food.png",
-        tag: "たのしみごはん"
+        id: "blue",
+        name: "ブルータイプ",
+        description: "ごはんや休憩のお世話担当。ごほうびタイムをだいじにする。",
+        image: "public/char/bluejoy.png",
+        tag: "たのしみごはん",
+        themeColor: "#8ec5ff"
       },
       {
-        id: "fashion",
-        name: "おしゃれタイプ",
-        description: "おしゃれが大好きなキャラ。ふくや持ち物、じぶんらしさのお世話がとくい。",
-        image: "public/char/pinkjoy.png", // おしゃれはピンクの画像にしてあります
-        tag: "じぶんらしさ"
+        id: "green",
+        name: "グリーンタイプ",
+        description: "からだのお世話がだいじ。ねむりや運動、水分チャージを応援。",
+        image: "public/char/greenjoy.png",
+        tag: "からだのお世話",
+        themeColor: "#9fe8a6"
       }
     ];
 
-    // 3つの生活シーン
+    // 3つの生活シーン（各2択）
     const scenes = [
       {
         id: "morning",
@@ -454,19 +531,11 @@
           {
             id: "m_water",
             label: "顔を洗うついでに、水をコップ1杯のむ",
-            type: "health",
             tag: "水分チャージ"
-          },
-          {
-            id: "m_breakfast",
-            label: "すわって、ゆっくり朝ごはんを食べる",
-            type: "food",
-            tag: "あさごはん"
           },
           {
             id: "m_outfit",
             label: "きょうの気分に合うふく／アクセをひとつだけえらぶ",
-            type: "fashion",
             tag: "きょうのコーデ"
           }
         ]
@@ -480,20 +549,12 @@
           {
             id: "a_stretch",
             label: "家についたら、5分だけストレッチかさんぽをする",
-            type: "health",
             tag: "ストレッチ"
           },
           {
             id: "a_snack",
             label: "小さな「ごほうびおやつ」をひとつだけえらんで味わう",
-            type: "food",
             tag: "ごほうびタイム"
-          },
-          {
-            id: "a_bag",
-            label: "あしたの持ち物チェックをして、カバンをととのえる",
-            type: "fashion",
-            tag: "じゅんび上手"
           }
         ]
       },
@@ -504,21 +565,13 @@
         desc: "ねる前の2〜3分で、あしたの自分にしてあげたいお世話をひとつえらぼう。",
         choices: [
           {
-            id: "n_breath",
-            label: "画面をとじて、深呼吸を3回してからねる",
-            type: "health",
-            tag: "ぐっすり準備"
-          },
-          {
             id: "n_breakfast_plan",
             label: "あしたの朝ごはんアイデアをメモに一行だけ書く",
-            type: "food",
             tag: "あさごはん計画"
           },
           {
             id: "n_clothes",
             label: "あした着るふくをハンガーにかけておく（上だけでもOK）",
-            type: "fashion",
             tag: "あしたのコーデ"
           }
         ]
@@ -528,17 +581,15 @@
     // 状態管理
     const state = {
       characterId: null,
-      // sceneId -> choiceId
-      selections: {},
-      // sceneId -> "did" | "half" | "no"
-      results: {},
+      selections: {}, // sceneId -> choiceId
+      results: {},    // sceneId -> "did" | "half" | "no"
       heart: 0
     };
 
-    // DOM
-    const screenStart = document.getElementById("screen-start");
-    const screenScenes = document.getElementById("screen-scenes");
-    const screenLog = document.getElementById("screen-log");
+    // DOM 要素取得
+    const screenStart   = document.getElementById("screen-start");
+    const screenScenes  = document.getElementById("screen-scenes");
+    const screenLog     = document.getElementById("screen-log");
     const screenSummary = document.getElementById("screen-summary");
 
     const charListEl = document.getElementById("char-list");
@@ -548,7 +599,6 @@
     const sceneTitle = document.getElementById("scene-title");
     const sceneDesc = document.getElementById("scene-desc");
     const choiceListEl = document.getElementById("choice-list");
-    const activeCharName = document.getElementById("active-char-name");
     const sceneBubble = document.getElementById("scene-bubble");
 
     const btnSceneBack = document.getElementById("btn-scene-back");
@@ -564,6 +614,12 @@
 
     const heartCountEl = document.getElementById("heart-count");
 
+    const charVisual = document.getElementById("char-visual");
+    const charVisualInner = document.getElementById("char-visual-inner");
+    const charVisualImg = document.getElementById("char-visual-img");
+    const charVisualName = document.getElementById("char-visual-name");
+    const charVisualTag = document.getElementById("char-visual-tag");
+
     let currentSceneIndex = 0;
 
     function showScreen(screen) {
@@ -571,13 +627,49 @@
         s.classList.remove("active");
       });
       screen.classList.add("active");
+
+      // キャラビジュアルの表示／非表示
+      if (screen === screenStart || !state.characterId) {
+        charVisual.classList.add("hidden");
+      } else {
+        charVisual.classList.remove("hidden");
+      }
     }
 
     function updateHeartView() {
       heartCountEl.textContent = state.heart;
     }
 
-    // キャラカード描画
+    function getActiveCharacter() {
+      return characters.find(c => c.id === state.characterId);
+    }
+
+    function updateCharVisual() {
+      const char = getActiveCharacter();
+      if (!char) return;
+      charVisualImg.src = char.image;
+      charVisualImg.alt = char.name;
+      charVisualName.textContent = char.name;
+      charVisualTag.textContent = char.tag;
+      // 色によって背景グラデーションを少し変えてみる
+      charVisualInner.style.background = `radial-gradient(circle at 30% 20%, #fff, ${char.themeColor})`;
+    }
+
+    function triggerCharacterAnimation(type) {
+      // type: "happy" / "spin"
+      if (!charVisualInner) return;
+      let className = type === "spin" ? "char-spin" : "char-happy";
+      charVisualInner.classList.remove("char-happy", "char-spin");
+      // 次のフレームで付け直すとアニメが毎回動く
+      requestAnimationFrame(() => {
+        charVisualInner.classList.add(className);
+        setTimeout(() => {
+          charVisualInner.classList.remove(className);
+        }, 700);
+      });
+    }
+
+    // キャラカード表示
     function renderCharacterCards() {
       charListEl.innerHTML = "";
       characters.forEach(char => {
@@ -586,14 +678,14 @@
         card.dataset.charId = char.id;
 
         const icon = document.createElement("div");
-        icon.className = "char-icon";
+        icon.className = "char-icon-small";
         if (char.image) {
           const img = document.createElement("img");
           img.src = char.image;
           img.alt = char.name;
           icon.appendChild(img);
         } else {
-          icon.textContent = "🐾";
+          icon.textContent = "⭐";
         }
 
         const infoDiv = document.createElement("div");
@@ -605,8 +697,13 @@
         desc.className = "char-info-desc";
         desc.textContent = char.description;
 
+        const tag = document.createElement("div");
+        tag.className = "char-info-tag";
+        tag.textContent = char.tag;
+
         infoDiv.appendChild(title);
         infoDiv.appendChild(desc);
+        infoDiv.appendChild(tag);
 
         card.appendChild(icon);
         card.appendChild(infoDiv);
@@ -618,33 +715,31 @@
           btnStartNext.disabled = false;
 
           const bubble = document.getElementById("start-bubble");
-          bubble.textContent = char.name + "：「きょうは、" + char.tag + " をいっしょにたのしもう〜」";
+          bubble.textContent = char.name + "：「きょうは、" + char.tag + " をいっしょにためしてみよ〜」";
         });
 
         charListEl.appendChild(card);
       });
     }
 
-    function getActiveCharacter() {
-      return characters.find(c => c.id === state.characterId);
-    }
-
-    // シーン表示
+    // シーン表示（2択）
     function renderScene() {
       const scene = scenes[currentSceneIndex];
       const char = getActiveCharacter();
+      if (char) {
+        updateCharVisual();
+      }
 
       sceneStepLabel.textContent = scene.stepLabel;
       sceneTitle.textContent = scene.title;
       sceneDesc.textContent = scene.desc;
-      activeCharName.textContent = char ? char.name + " といっしょ" : "";
 
       const sceneMessages = {
-        morning: "おはよう〜。きょうのスタートに、どんなお世話をしてみる？",
-        afternoon: "おつかれさま。がんばった自分に、ちょっとだけお世話しよ。",
-        night: "1日おつかれさま。あしたの自分にしてあげたいお世話はどれかな？"
+        morning: "おはよう〜。きょうのスタートに、どっちのお世話をためしてみる？",
+        afternoon: "おつかれさま。がんばった自分に、どっちのお世話が良さそう？",
+        night: "1日おつかれさま。あしたの自分のために、どっちをしてあげたい？"
       };
-      sceneBubble.textContent = sceneMessages[scene.id] || "どれをためしてみる？";
+      sceneBubble.textContent = (char ? char.name + "： " : "") + (sceneMessages[scene.id] || "どれをためしてみる？");
 
       choiceListEl.innerHTML = "";
       const selectedChoiceId = state.selections[scene.id];
@@ -668,8 +763,7 @@
 
         const tagDiv = document.createElement("div");
         tagDiv.className = "choice-tag";
-        const typeChar = characters.find(c => c.id === ch.type);
-        tagDiv.textContent = (typeChar ? typeChar.tag : "") + " ／ " + ch.tag;
+        tagDiv.textContent = "今日のお世話： " + ch.tag;
 
         mainDiv.appendChild(labelDiv);
         mainDiv.appendChild(tagDiv);
@@ -706,6 +800,7 @@
     function renderLogScreen() {
       const char = getActiveCharacter();
       if (char) {
+        updateCharVisual();
         document.getElementById("log-bubble").textContent =
           char.name + "：きめたお世話、どこまでできたか教えて〜。";
       }
@@ -757,6 +852,13 @@
               b.classList.toggle("selected", b.dataset.level === lv.id);
             });
             updateLogFinishButton();
+
+            // 「できた！」のときはキャラを揺らす
+            if (lv.id === "did") {
+              triggerCharacterAnimation("happy");
+            } else if (lv.id === "half") {
+              triggerCharacterAnimation("spin");
+            }
           });
 
           buttonsDiv.appendChild(btn);
@@ -780,6 +882,10 @@
     // 結果画面描画
     function renderSummary() {
       const char = getActiveCharacter();
+      if (char) {
+        updateCharVisual();
+      }
+
       const totals = { did: 0, half: 0, no: 0 };
 
       scenes.forEach(scene => {
@@ -842,7 +948,7 @@
         summaryMain.appendChild(p);
       });
 
-      // タグっぽい表示
+      // タグ表示（きょう選んだお世話）
       summaryTags.innerHTML = "";
       const tagSet = new Set();
 
@@ -874,6 +980,9 @@
         }
         summaryBubble.textContent = char.name + "： " + charComment;
       }
+
+      // 結果画面に来たときに、ちょっとだけクルっと回す
+      triggerCharacterAnimation("spin");
     }
 
     // イベント設定
@@ -885,6 +994,7 @@
         if (!state.characterId) return;
         currentSceneIndex = 0;
         showScreen(screenScenes);
+        updateCharVisual();
         renderScene();
       });
 
@@ -918,7 +1028,7 @@
       });
 
       document.getElementById("btn-summary-restart").addEventListener("click", () => {
-        // キャラ選びからはリセットするけど、ハートは「つみあげ」でもいいかなと思い残しています
+        // キャラ選びからやり直し（ハートは積み上げのまま）
         state.characterId = null;
         state.selections = {};
         state.results = {};
