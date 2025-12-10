@@ -8,14 +8,18 @@
       box-sizing: border-box;
     }
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "Yu Gothic", "Meiryo", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
       padding: 0;
       background: #f5f5fb;
-      color: #333;
+      color: #222;
+      font-size: 15px;
+      line-height: 1.6;
+      font-weight: 500;
     }
     h1, h2, h3 {
       margin: 0 0 8px;
+      font-weight: 700;
     }
     button {
       font-family: inherit;
@@ -35,27 +39,31 @@
       gap: 2px;
     }
     .app-header-title {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 19px;
+      font-weight: 800;
     }
     .app-header-sub {
       font-size: 12px;
-      color: #666;
+      color: #555;
+      font-weight: 600;
     }
     .app-header-right {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 12px;
-      color: #777;
+      font-size: 13px;
+      color: #444;
+      font-weight: 600;
     }
     .heart-box {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 4px 8px;
+      padding: 4px 10px;
       border-radius: 999px;
       background: #ffe4ef;
+      border: 1px solid #ffb3cb;
+      font-weight: 700;
     }
 
     #app {
@@ -85,8 +93,8 @@
       gap: 6px;
     }
     .char-visual-inner {
-      width: 160px;
-      height: 160px;
+      width: 170px;
+      height: 170px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 20%, #fff, #ffd9ec);
       display: flex;
@@ -95,42 +103,33 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.12);
       overflow: hidden;
       transform-origin: center center;
+      /* ふだんはゆらゆらアニメ */
+      animation: char-sway 2.2s ease-in-out infinite;
     }
     .char-visual-inner img {
-      width: 78%;
-      height: 78%;
+      width: 80%;
+      height: 80%;
       object-fit: contain;
       pointer-events: none;
     }
     .char-visual-name {
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 800;
     }
     .char-visual-tag {
-      font-size: 11px;
-      color: #777;
+      font-size: 12px;
+      color: #555;
+      font-weight: 600;
     }
     .hidden {
       display: none;
     }
 
-    /* キャラアニメーション */
-    @keyframes char-bounce {
+    /* キャラのゆらゆらアニメ */
+    @keyframes char-sway {
       0%   { transform: translateY(0); }
-      20%  { transform: translateY(-10px); }
-      40%  { transform: translateY(0); }
-      60%  { transform: translateY(-6px); }
+      50%  { transform: translateY(-6px); }
       100% { transform: translateY(0); }
-    }
-    @keyframes char-spin {
-      0%   { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .char-happy {
-      animation: char-bounce 0.4s ease-out;
-    }
-    .char-spin {
-      animation: char-spin 0.6s ease-out;
     }
 
     .char-list {
@@ -161,8 +160,8 @@
       background: #fff7fb;
     }
     .char-icon-small {
-      width: 72px;
-      height: 72px;
+      width: 76px;
+      height: 76px;
       border-radius: 50%;
       background: #eee;
       display: flex;
@@ -177,29 +176,33 @@
       object-fit: cover;
     }
     .char-info-title {
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 4px;
-      font-size: 14px;
+      font-size: 15px;
     }
     .char-info-desc {
-      font-size: 12px;
-      color: #555;
+      font-size: 13px;
+      color: #444;
       margin-bottom: 2px;
+      font-weight: 500;
     }
     .char-info-tag {
-      font-size: 11px;
-      color: #888;
+      font-size: 12px;
+      color: #666;
+      font-weight: 600;
     }
 
     .bubble {
       position: relative;
       display: inline-block;
       max-width: 100%;
-      padding: 10px 14px;
+      padding: 8px 12px;
       border-radius: 16px;
       background: #fff2f6;
       font-size: 13px;
       margin: 8px 0 12px;
+      font-weight: 600;
+      color: #444;
     }
     .bubble::after {
       content: "";
@@ -215,21 +218,23 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
     .scene-step {
       font-size: 12px;
-      color: #777;
+      color: #666;
+      font-weight: 600;
     }
     .scene-title {
       font-size: 17px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .scene-desc {
       font-size: 13px;
-      color: #555;
+      color: #444;
       margin-bottom: 8px;
+      font-weight: 600;
     }
 
     .choice-list {
@@ -242,7 +247,7 @@
     .choice-item {
       border-radius: 14px;
       padding: 10px 12px;
-      border: 1px solid #ddd;
+      border: 2px solid #ddd;
       background: #fafafa;
       display: flex;
       align-items: flex-start;
@@ -262,13 +267,15 @@
       flex: 1;
     }
     .choice-label {
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 15px;
+      font-weight: 800;
+      color: #222;
     }
     .choice-tag {
-      font-size: 11px;
-      color: #888;
+      font-size: 12px;
+      color: #666;
       margin-top: 2px;
+      font-weight: 600;
     }
 
     .nav-row {
@@ -281,13 +288,15 @@
     .btn {
       border: none;
       border-radius: 999px;
-      padding: 8px 16px;
-      font-size: 13px;
+      padding: 8px 18px;
+      font-size: 14px;
       cursor: pointer;
-      transition: opacity 0.1s ease, transform 0.05s ease;
+      transition: opacity 0.1s ease, transform 0.05s ease, box-shadow 0.1s ease;
+      font-weight: 700;
     }
     .btn:active {
       transform: translateY(1px);
+      box-shadow: inset 0 2px 3px rgba(0,0,0,0.15);
     }
     .btn-primary {
       background: #ff7aa2;
@@ -300,6 +309,7 @@
     .btn[disabled] {
       opacity: 0.5;
       cursor: not-allowed;
+      box-shadow: none;
     }
 
     .log-group {
@@ -314,13 +324,14 @@
     }
     .log-title {
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 4px;
     }
     .log-selected {
       font-size: 13px;
-      color: #555;
+      color: #444;
       margin-bottom: 4px;
+      font-weight: 500;
     }
     .log-buttons {
       display: flex;
@@ -330,11 +341,12 @@
     .log-btn {
       padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid #ddd;
+      border: 1px solid #ccc;
       background: #fafafa;
-      font-size: 12px;
+      font-size: 13px;
       cursor: pointer;
       transition: background 0.1s ease, border-color 0.1s ease, transform 0.05s ease;
+      font-weight: 700;
     }
     .log-btn:hover {
       background: #fff;
@@ -352,6 +364,7 @@
       border: 1px solid #ffd0e0;
       font-size: 13px;
       margin-top: 8px;
+      font-weight: 500;
     }
     .chips-row {
       display: flex;
@@ -360,11 +373,13 @@
       margin-top: 6px;
     }
     .chip {
-      font-size: 11px;
+      font-size: 12px;
       padding: 2px 8px;
       border-radius: 999px;
       border: 1px solid #ffd0e0;
       background: #fff;
+      font-weight: 600;
+      color: #444;
     }
 
     .small-note {
@@ -378,7 +393,7 @@
   <header class="app-header">
     <div class="app-header-left">
       <div class="app-header-title">お世話合戦</div>
-      <div class="app-header-sub">つまらないお世話でキャラをよろこばせよう</div>
+      <div class="app-header-sub">毎日のちいさなお世話ゲーム</div>
     </div>
     <div class="app-header-right">
       <div>1日のミニゲーム</div>
@@ -401,13 +416,13 @@
 
     <!-- スタート画面：キャラクター選択 -->
     <section id="screen-start" class="screen active">
-      <h2>1. お世話キャラをえらぶ</h2>
-      <p style="font-size:13px; color:#555;">
-        きょう一日、どんな「お世話」を大事にしてみたいかに近いキャラをえらんでください。
+      <h2>1. キャラをえらぶ</h2>
+      <p style="font-size:13px; color:#444; font-weight:600; margin-bottom:6px;">
+        きょう、どんなお世話をがんばりたい？
       </p>
 
       <div class="bubble" id="start-bubble">
-        きょうは、どんなお世話をいっしょにためしてみる？
+        だれと一日すごす？
       </div>
 
       <div class="char-list" id="char-list">
@@ -415,7 +430,7 @@
       </div>
 
       <div class="nav-row">
-        <button id="btn-start-next" class="btn btn-primary" disabled>このキャラでスタート</button>
+        <button id="btn-start-next" class="btn btn-primary" disabled>このキャラにする</button>
       </div>
     </section>
 
@@ -428,9 +443,7 @@
         </div>
       </div>
 
-      <div class="bubble" id="scene-bubble">
-        <!-- キャラのセリフ -->
-      </div>
+      <div class="bubble" id="scene-bubble"></div>
 
       <div class="scene-desc" id="scene-desc"></div>
 
@@ -446,13 +459,13 @@
 
     <!-- ログ画面：できたかどうかの記録 -->
     <section id="screen-log" class="screen">
-      <h2>2. きょうの「お世話」をふりかえる</h2>
-      <p style="font-size:13px; color:#555;">
-        きめたお世話が、どこまでできたかをえらんでください。できなくても正直に書いてOKです。
+      <h2>2. きょうのふりかえり</h2>
+      <p style="font-size:13px; color:#444; font-weight:600; margin-bottom:6px;">
+        できたかどうか、えらんでね。
       </p>
 
       <div class="bubble" id="log-bubble">
-        きょうのこと、いっしょにふりかえってみよ〜。
+        きょうのようす、教えて〜。
       </div>
 
       <div id="log-groups">
@@ -460,17 +473,17 @@
       </div>
 
       <div class="nav-row">
-        <button id="btn-log-back" class="btn btn-secondary">シーン選びにもどる</button>
+        <button id="btn-log-back" class="btn btn-secondary">シーンにもどる</button>
         <button id="btn-log-finish" class="btn btn-primary" disabled>結果を見る</button>
       </div>
     </section>
 
     <!-- 結果画面 -->
     <section id="screen-summary" class="screen">
-      <h2>3. きょうの お世話レポート</h2>
+      <h2>3. きょうのレポート</h2>
 
       <div class="bubble" id="summary-bubble">
-        きょうのお世話、がんばったね。どんな1日だったか見てみよう。
+        きょうのお世話、おつかれさま。
       </div>
 
       <div class="summary-box" id="summary-main">
@@ -482,11 +495,11 @@
       </div>
 
       <p class="small-note">
-        きょううまくいかなかったところも、「気づいた」というだけでじゅうぶん立派なお世話かもしれませんね。
+        できなかった日も、「やろうと思った」だけでじゅうぶんえらいかもしれませんね。
       </p>
 
       <div class="nav-row">
-        <button id="btn-summary-restart" class="btn btn-secondary">もう一回キャラをえらぶ</button>
+        <button id="btn-summary-restart" class="btn btn-secondary">もう一回あそぶ</button>
       </div>
     </section>
   </div>
@@ -497,45 +510,45 @@
       {
         id: "pink",
         name: "ピンクタイプ",
-        description: "じぶんらしさやおしゃれのお世話がとくい。気分をアゲるのが好き。",
+        description: "おしゃれと気分アゲ担当。",
         image: "public/char/pinkjoy.png",
-        tag: "じぶんらしさのお世話",
+        tag: "じぶんらしさ",
         themeColor: "#ff9ecb"
       },
       {
         id: "blue",
         name: "ブルータイプ",
-        description: "ごはんや休憩のお世話担当。ごほうびタイムをだいじにする。",
+        description: "ごはんと休けい担当。",
         image: "public/char/bluejoy.png",
-        tag: "たのしみごはん",
+        tag: "ごほうびタイム",
         themeColor: "#8ec5ff"
       },
       {
         id: "green",
         name: "グリーンタイプ",
-        description: "からだのお世話がだいじ。ねむりや運動、水分チャージを応援。",
+        description: "ねむりとからだ担当。",
         image: "public/char/greenjoy.png",
-        tag: "からだのお世話",
+        tag: "からだケア",
         themeColor: "#9fe8a6"
       }
     ];
 
-    // 3つの生活シーン（各2択）
+    // 3つの生活シーン（各2択）・短めテキスト
     const scenes = [
       {
         id: "morning",
         stepLabel: "シーン 1 / 3",
-        title: "朝：家を出るまでの3分お世話",
-        desc: "起きてから家を出るまでのあいだに、きょうはどんなお世話をしてみる？",
+        title: "朝：出かける前",
+        desc: "朝いちばん、どっちをやる？",
         choices: [
           {
             id: "m_water",
-            label: "顔を洗うついでに、水をコップ1杯のむ",
-            tag: "水分チャージ"
+            label: "顔をあらったら、水をコップ1杯のむ",
+            tag: "水をのむ"
           },
           {
             id: "m_outfit",
-            label: "きょうの気分に合うふく／アクセをひとつだけえらぶ",
+            label: "きょうの気分で、服かアクセを1つえらぶ",
             tag: "きょうのコーデ"
           }
         ]
@@ -543,36 +556,36 @@
       {
         id: "afternoon",
         stepLabel: "シーン 2 / 3",
-        title: "放課後：つかれた自分へのお世話",
-        desc: "学校から帰ってきたあと、夜ごはんまでにできそうなお世話をえらんでね。",
+        title: "放課後：家についたあと",
+        desc: "つかれた自分に、どっちをする？",
         choices: [
           {
             id: "a_stretch",
-            label: "家についたら、5分だけストレッチかさんぽをする",
+            label: "5分だけストレッチか、ちょっとさんぽ",
             tag: "ストレッチ"
           },
           {
             id: "a_snack",
-            label: "小さな「ごほうびおやつ」をひとつだけえらんで味わう",
-            tag: "ごほうびタイム"
+            label: "ごほうびおやつを1つえらんでゆっくり食べる",
+            tag: "ごほうびおやつ"
           }
         ]
       },
       {
         id: "night",
         stepLabel: "シーン 3 / 3",
-        title: "夜：あしたの自分へのお世話",
-        desc: "ねる前の2〜3分で、あしたの自分にしてあげたいお世話をひとつえらぼう。",
+        title: "夜：ねる前",
+        desc: "あしたの自分のために、どっちをする？",
         choices: [
           {
             id: "n_breakfast_plan",
-            label: "あしたの朝ごはんアイデアをメモに一行だけ書く",
+            label: "あしたの朝ごはんを、メモに1行だけかく",
             tag: "あさごはん計画"
           },
           {
             id: "n_clothes",
-            label: "あした着るふくをハンガーにかけておく（上だけでもOK）",
-            tag: "あしたのコーデ"
+            label: "あした着る服をハンガーにかけておく",
+            tag: "あしたの服"
           }
         ]
       }
@@ -651,22 +664,7 @@
       charVisualImg.alt = char.name;
       charVisualName.textContent = char.name;
       charVisualTag.textContent = char.tag;
-      // 色によって背景グラデーションを少し変えてみる
       charVisualInner.style.background = `radial-gradient(circle at 30% 20%, #fff, ${char.themeColor})`;
-    }
-
-    function triggerCharacterAnimation(type) {
-      // type: "happy" / "spin"
-      if (!charVisualInner) return;
-      let className = type === "spin" ? "char-spin" : "char-happy";
-      charVisualInner.classList.remove("char-happy", "char-spin");
-      // 次のフレームで付け直すとアニメが毎回動く
-      requestAnimationFrame(() => {
-        charVisualInner.classList.add(className);
-        setTimeout(() => {
-          charVisualInner.classList.remove(className);
-        }, 700);
-      });
     }
 
     // キャラカード表示
@@ -715,7 +713,7 @@
           btnStartNext.disabled = false;
 
           const bubble = document.getElementById("start-bubble");
-          bubble.textContent = char.name + "：「きょうは、" + char.tag + " をいっしょにためしてみよ〜」";
+          bubble.textContent = char.name + "：「" + char.tag + " をいっしょにやろう！」";
         });
 
         charListEl.appendChild(card);
@@ -735,11 +733,11 @@
       sceneDesc.textContent = scene.desc;
 
       const sceneMessages = {
-        morning: "おはよう〜。きょうのスタートに、どっちのお世話をためしてみる？",
-        afternoon: "おつかれさま。がんばった自分に、どっちのお世話が良さそう？",
-        night: "1日おつかれさま。あしたの自分のために、どっちをしてあげたい？"
+        morning: "朝いちばん、どっちにする？",
+        afternoon: "おつかれさま。どっちで一息つく？",
+        night: "ねる前、あしたのためにどっちする？"
       };
-      sceneBubble.textContent = (char ? char.name + "： " : "") + (sceneMessages[scene.id] || "どれをためしてみる？");
+      sceneBubble.textContent = (char ? char.name + "： " : "") + (sceneMessages[scene.id] || "");
 
       choiceListEl.innerHTML = "";
       const selectedChoiceId = state.selections[scene.id];
@@ -763,7 +761,7 @@
 
         const tagDiv = document.createElement("div");
         tagDiv.className = "choice-tag";
-        tagDiv.textContent = "今日のお世話： " + ch.tag;
+        tagDiv.textContent = "今日のお世話：" + ch.tag;
 
         mainDiv.appendChild(labelDiv);
         mainDiv.appendChild(tagDiv);
@@ -802,7 +800,7 @@
       if (char) {
         updateCharVisual();
         document.getElementById("log-bubble").textContent =
-          char.name + "：きめたお世話、どこまでできたか教えて〜。";
+          char.name + "： どれくらいできた？";
       }
 
       logGroupsEl.innerHTML = "";
@@ -822,15 +820,15 @@
         selectedDiv.className = "log-selected";
         selectedDiv.textContent = choice
           ? "きめたお世話： " + choice.label
-          : "まだお世話がえらばれていません。";
+          : "まだえらばれていません。";
 
         const buttonsDiv = document.createElement("div");
         buttonsDiv.className = "log-buttons";
 
         const levels = [
-          { id: "did", label: "できた！" },
-          { id: "half", label: "半分くらいできた" },
-          { id: "no", label: "きょうはできなかった" }
+          { id: "did",  label: "できた！" },
+          { id: "half", label: "半分できた" },
+          { id: "no",   label: "できなかった" }
         ];
 
         levels.forEach(lv => {
@@ -852,13 +850,6 @@
               b.classList.toggle("selected", b.dataset.level === lv.id);
             });
             updateLogFinishButton();
-
-            // 「できた！」のときはキャラを揺らす
-            if (lv.id === "did") {
-              triggerCharacterAnimation("happy");
-            } else if (lv.id === "half") {
-              triggerCharacterAnimation("spin");
-            }
           });
 
           buttonsDiv.appendChild(btn);
@@ -907,37 +898,29 @@
 
       const messages = [];
       if (totals.did > 0) {
-        messages.push(`「できた！」お世話：${totals.did} 件`);
+        messages.push(`「できた！」：${totals.did} 件`);
       }
       if (totals.half > 0) {
-        messages.push(`「半分くらいできた」お世話：${totals.half} 件`);
+        messages.push(`「半分できた」：${totals.half} 件`);
       }
       if (totals.no > 0) {
-        messages.push(`「きょうはできなかった」お世話：${totals.no} 件`);
+        messages.push(`「できなかった」：${totals.no} 件`);
       }
 
       const mainTextLines = [];
 
       if (char) {
-        mainTextLines.push(`${char.name} といっしょに過ごした1日でした。`);
+        mainTextLines.push(`${char.name} とすごした1日。`);
       }
 
       if (messages.length > 0) {
         mainTextLines.push(messages.join(" ／ "));
-      } else {
-        mainTextLines.push("きょうのお世話は、まだ記録されていません。");
       }
 
       if (heartGain > 0) {
         mainTextLines.push(`きょうふえたハート：+${heartGain}`);
       } else {
-        mainTextLines.push("きょうはハートはふえなかったけれど、「やろうかな」と思っただけでも一歩です。");
-      }
-
-      if (totals.no > 0) {
-        mainTextLines.push(
-          "できなかったところも、「気づいた」というだけで、すでに学びのタネかもしれませんね。"
-        );
+        mainTextLines.push("きょうはハートはふえなかった日。そんな日もOK。");
       }
 
       summaryMain.innerHTML = "";
@@ -963,26 +946,23 @@
       Array.from(tagSet).forEach(tag => {
         const div = document.createElement("div");
         div.className = "chip";
-        div.textContent = "きょうのお世話テーマ：" + tag;
+        div.textContent = "きょうのお世話：" + tag;
         summaryTags.appendChild(div);
       });
 
       if (char) {
         let charComment = "";
         if (totals.did >= 2) {
-          charComment = "お世話たくさんできてるね。からだも心も、すこし笑ってるかもしれないよ。";
+          charComment = "よくがんばったね。からだも心もニコニコかも。";
         } else if (totals.half >= 1) {
-          charComment = "「半分できた」って気づけたの、じつはすごく大事なことだよ。";
+          charComment = "「半分できた」に気づけたの、すごくいいよ。";
         } else if (totals.no >= 1) {
-          charComment = "きょうは「やろうと思ったけどできなかった日」ってことでOK。またこんど、いっしょにためそう。";
+          charComment = "できない日も大事な1日。またあそぼ。";
         } else {
-          charComment = "どんな1日にしてみたいか、またいっしょに考えてみよう。";
+          charComment = "つぎはどんな1日にしようか？";
         }
         summaryBubble.textContent = char.name + "： " + charComment;
       }
-
-      // 結果画面に来たときに、ちょっとだけクルっと回す
-      triggerCharacterAnimation("spin");
     }
 
     // イベント設定
@@ -1035,8 +1015,7 @@
         currentSceneIndex = 0;
         btnStartNext.disabled = true;
         document.querySelectorAll(".char-card").forEach(c => c.classList.remove("selected"));
-        document.getElementById("start-bubble").textContent =
-          "きょうは、どんなお世話をいっしょにためしてみる？";
+        document.getElementById("start-bubble").textContent = "だれと一日すごす？";
         showScreen(screenStart);
       });
     });
