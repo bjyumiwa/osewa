@@ -533,63 +533,178 @@
       }
     ];
 
-    // 3つの生活シーン（各2択）・短めテキスト
-    const scenes = [
-      {
-        id: "morning",
-        stepLabel: "シーン 1 / 3",
-        title: "朝：出かける前",
-        desc: "朝いちばん、どっちをやる？",
-        choices: [
-          {
-            id: "m_water",
-            label: "顔をあらったら、水をコップ1杯のむ",
-            tag: "水をのむ"
-          },
-          {
-            id: "m_outfit",
-            label: "きょうの気分で、服かアクセを1つえらぶ",
-            tag: "きょうのコーデ"
-          }
-        ]
-      },
-      {
-        id: "afternoon",
-        stepLabel: "シーン 2 / 3",
-        title: "放課後：家についたあと",
-        desc: "つかれた自分に、どっちをする？",
-        choices: [
-          {
-            id: "a_stretch",
-            label: "5分だけストレッチか、ちょっとさんぽ",
-            tag: "ストレッチ"
-          },
-          {
-            id: "a_snack",
-            label: "ごほうびおやつを1つえらんでゆっくり食べる",
-            tag: "ごほうびおやつ"
-          }
-        ]
-      },
-      {
-        id: "night",
-        stepLabel: "シーン 3 / 3",
-        title: "夜：ねる前",
-        desc: "あしたの自分のために、どっちをする？",
-        choices: [
-          {
-            id: "n_breakfast_plan",
-            label: "あしたの朝ごはんを、メモに1行だけかく",
-            tag: "あさごはん計画"
-          },
-          {
-            id: "n_clothes",
-            label: "あした着る服をハンガーにかけておく",
-            tag: "あしたの服"
-          }
-        ]
-      }
-    ];
+    // キャラごとに「お世話シーン」を変える
+    // id は morning / afternoon / night で共通だが、テキストと内容はタイプ別
+    const scenesByChar = {
+      pink: [
+        {
+          id: "morning",
+          stepLabel: "シーン 1 / 3",
+          title: "朝：出かける前",
+          desc: "朝いちばん、どっちで気分をととのえる？",
+          choices: [
+            {
+              id: "p_m_acce",
+              label: "きょうの気分で、アクセか小物を1つえらぶ",
+              tag: "ワンポイントおしゃれ"
+            },
+            {
+              id: "p_m_mirror",
+              label: "鏡を見て、ニコッと1回わらってみる",
+              tag: "あさニコッ"
+            }
+          ]
+        },
+        {
+          id: "afternoon",
+          stepLabel: "シーン 2 / 3",
+          title: "放課後：家についたあと",
+          desc: "つかれたあとの気分、お世話するなら？",
+          choices: [
+            {
+              id: "p_a_doodle",
+              label: "ノートのすみに、らくがきを1つかく",
+              tag: "らくがきタイム"
+            },
+            {
+              id: "p_a_desk",
+              label: "机の上を1分だけととのえる",
+              tag: "デスクお片づけ"
+            }
+          ]
+        },
+        {
+          id: "night",
+          stepLabel: "シーン 3 / 3",
+          title: "夜：ねる前",
+          desc: "あしたの「じぶんらしさ」のためにどっち？",
+          choices: [
+            {
+              id: "p_n_color",
+              label: "あしたの服の「色」だけ先に決める",
+              tag: "あしたのカラー"
+            },
+            {
+              id: "p_n_good",
+              label: "きょうの「よかったこと」を1行メモる",
+              tag: "よかった1行メモ"
+            }
+          ]
+        }
+      ],
+      blue: [
+        {
+          id: "morning",
+          stepLabel: "シーン 1 / 3",
+          title: "朝：出かける前",
+          desc: "朝ごはんまわりのお世話、どっちにする？",
+          choices: [
+            {
+              id: "b_m_water",
+              label: "朝ごはんの前に水を1杯のむ",
+              tag: "あさみず"
+            },
+            {
+              id: "b_m_bite",
+              label: "ひと口だけでも、ごはんかパンを食べる",
+              tag: "ひと口モグ"
+            }
+          ]
+        },
+        {
+          id: "afternoon",
+          stepLabel: "シーン 2 / 3",
+          title: "放課後：家についたあと",
+          desc: "つかれたおなかと心に、どっち？",
+          choices: [
+            {
+              id: "b_a_snack",
+              label: "ごほうびおやつを1つえらんで、じっくり味わう",
+              tag: "ごほうびおやつ"
+            },
+            {
+              id: "b_a_tea",
+              label: "あたたかい飲み物を作って、3分だけ休けい",
+              tag: "ホットドリンク"
+            }
+          ]
+        },
+        {
+          id: "night",
+          stepLabel: "シーン 3 / 3",
+          title: "夜：ねる前",
+          desc: "あしたの食のために、どっちをする？",
+          choices: [
+            {
+              id: "b_n_breakfast",
+              label: "あした食べたい朝ごはんを1行メモる",
+              tag: "あさごはん計画"
+            },
+            {
+              id: "b_n_bottle",
+              label: "あした持っていく水筒・ペットボトルを出しておく",
+              tag: "水とうじゅんび"
+            }
+          ]
+        }
+      ],
+      green: [
+        {
+          id: "morning",
+          stepLabel: "シーン 1 / 3",
+          title: "朝：出かける前",
+          desc: "からだを起こすお世話、どっち？",
+          choices: [
+            {
+              id: "g_m_stretch",
+              label: "肩と首をゆっくり10回まわす",
+              tag: "かるいストレッチ"
+            },
+            {
+              id: "g_m_breath",
+              label: "深呼吸を3回してから立ち上がる",
+              tag: "あさの深呼吸"
+            }
+          ]
+        },
+        {
+          id: "afternoon",
+          stepLabel: "シーン 2 / 3",
+          title: "放課後：家についたあと",
+          desc: "つかれたからだに、どっち？",
+          choices: [
+            {
+              id: "g_a_walk",
+              label: "家のまわりを3〜5分だけ歩く",
+              tag: "ちょい歩き"
+            },
+            {
+              id: "g_a_posture",
+              label: "背すじをのばして30秒すわる",
+              tag: "せすじピーン"
+            }
+          ]
+        },
+        {
+          id: "night",
+          stepLabel: "シーン 3 / 3",
+          title: "夜：ねる前",
+          desc: "ねむりのお世話、どっちにする？",
+          choices: [
+            {
+              id: "g_n_screen",
+              label: "ねる5分前に画面をとじて目をとじる",
+              tag: "画面おやすみ"
+            },
+            {
+              id: "g_n_leg",
+              label: "ふくらはぎを軽くもみほぐす",
+              tag: "あしケア"
+            }
+          ]
+        }
+      ]
+    };
 
     // 状態管理
     const state = {
@@ -598,6 +713,9 @@
       results: {},    // sceneId -> "did" | "half" | "no"
       heart: 0
     };
+
+    // 今選ばれているキャラ用のシーンセット
+    let currentScenes = [];
 
     // DOM 要素取得
     const screenStart   = document.getElementById("screen-start");
@@ -722,7 +840,8 @@
 
     // シーン表示（2択）
     function renderScene() {
-      const scene = scenes[currentSceneIndex];
+      if (!currentScenes || currentScenes.length === 0) return;
+      const scene = currentScenes[currentSceneIndex];
       const char = getActiveCharacter();
       if (char) {
         updateCharVisual();
@@ -788,10 +907,11 @@
     }
 
     function updateSceneNextButton() {
-      const scene = scenes[currentSceneIndex];
+      if (!currentScenes || currentScenes.length === 0) return;
+      const scene = currentScenes[currentSceneIndex];
       btnSceneNext.disabled = !state.selections[scene.id];
       btnSceneNext.textContent =
-        currentSceneIndex === scenes.length - 1 ? "ふりかえりへ" : "つぎのシーンへ";
+        currentSceneIndex === currentScenes.length - 1 ? "ふりかえりへ" : "つぎのシーンへ";
     }
 
     // ログ画面描画
@@ -805,7 +925,7 @@
 
       logGroupsEl.innerHTML = "";
 
-      scenes.forEach(scene => {
+      currentScenes.forEach(scene => {
         const choiceId = state.selections[scene.id];
         const choice = scene.choices.find(c => c.id === choiceId);
 
@@ -866,7 +986,7 @@
     }
 
     function updateLogFinishButton() {
-      const allFilled = scenes.every(sc => state.results[sc.id]);
+      const allFilled = currentScenes.every(sc => state.results[sc.id]);
       btnLogFinish.disabled = !allFilled;
     }
 
@@ -879,7 +999,7 @@
 
       const totals = { did: 0, half: 0, no: 0 };
 
-      scenes.forEach(scene => {
+      currentScenes.forEach(scene => {
         const r = state.results[scene.id];
         if (r && totals[r] !== undefined) {
           totals[r] += 1;
@@ -888,7 +1008,7 @@
 
       // ハート計算：できた=2, 半分=1, できなかった=0
       let heartGain = 0;
-      scenes.forEach(scene => {
+      currentScenes.forEach(scene => {
         const r = state.results[scene.id];
         if (r === "did") heartGain += 2;
         if (r === "half") heartGain += 1;
@@ -935,7 +1055,7 @@
       summaryTags.innerHTML = "";
       const tagSet = new Set();
 
-      scenes.forEach(scene => {
+      currentScenes.forEach(scene => {
         const choiceId = state.selections[scene.id];
         const choice = scene.choices.find(c => c.id === choiceId);
         if (choice) {
@@ -972,6 +1092,8 @@
 
       btnStartNext.addEventListener("click", () => {
         if (!state.characterId) return;
+        // キャラごとのシーンをセット
+        currentScenes = scenesByChar[state.characterId] || scenesByChar["pink"];
         currentSceneIndex = 0;
         showScreen(screenScenes);
         updateCharVisual();
@@ -988,7 +1110,7 @@
       });
 
       btnSceneNext.addEventListener("click", () => {
-        if (currentSceneIndex < scenes.length - 1) {
+        if (currentSceneIndex < currentScenes.length - 1) {
           currentSceneIndex += 1;
           renderScene();
         } else {
@@ -1012,6 +1134,7 @@
         state.characterId = null;
         state.selections = {};
         state.results = {};
+        currentScenes = [];
         currentSceneIndex = 0;
         btnStartNext.disabled = true;
         document.querySelectorAll(".char-card").forEach(c => c.classList.remove("selected"));
