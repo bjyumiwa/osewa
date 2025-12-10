@@ -451,7 +451,7 @@
       border-radius: 50%;
       background: radial-gradient(circle, #fff, #ff7aa2);
       opacity: 0;
-      animation: firework-pop 700ms ease-out forwards;
+      animation: firework-pop 700ms.ease-out forwards;
     }
     @keyframes firework-pop {
       0% {
@@ -491,7 +491,7 @@
       <div id="char-visual-tag" class="char-visual-tag"></div>
     </div>
 
-    <!-- スタート画面：コース＆キャラクター選択（静的HTML） -->
+    <!-- スタート画面 -->
     <section id="screen-start" class="screen active">
       <h2>1. コースとキャラをえらぶ</h2>
       <p style="font-size:13px; color:#444; font-weight:600; margin-bottom:6px;">
@@ -622,7 +622,7 @@
         <button id="btn-summary-nextday" class="btn btn-primary">
           つぎの1日へ（続ける）
         </button>
-        <button id="btn-summary-restart" class="btn btn-secondary">
+        <button id="btn-summary-restart" class="btn.btn-secondary">
           コースをえらびなおす
         </button>
       </div>
@@ -679,8 +679,150 @@
       return "完成期";
     }
 
-    // 各キャラ：1日5シーン×2択（前と同じ）
-    const scenesByChar = { /* ここは前に渡した scenesByChar と同じ内容をそのまま入れてください */ };
+    // 各キャラのシーン（5シーン×2択）
+    const scenesByChar = {
+      pink: [
+        {
+          id: "p_morning1",
+          title: "朝：起きたとき",
+          desc: "目がさめたとき、まずどっち？",
+          choices: [
+            { id: "p_m1_smile",  label: "ふとんの中で、ニコッと1回わらう",       tag: "あさニコッ",     iconEmoji: "😊" },
+            { id: "p_m1_breath", label: "深呼吸を3回してから起きあがる",         tag: "あさの深呼吸",   iconEmoji: "🌬️" }
+          ]
+        },
+        {
+          id: "p_morning2",
+          title: "朝：出かける準備",
+          desc: "出かける前に、じぶんにどんなお世話？",
+          choices: [
+            { id: "p_m2_accessory", label: "アクセ・小物を1つえらぶ（ヘアピン・イヤホンなど）", tag: "小物をえらぶ", iconEmoji: "🎀" },
+            { id: "p_m2_mirror",    label: "鏡を見て「きょうもいける」と小声で言う",             tag: "じぶんエール", iconEmoji: "🪞" }
+          ]
+        },
+        {
+          id: "p_school",
+          title: "学校：休み時間",
+          desc: "ちょっと空いた時間に、どっち？",
+          choices: [
+            { id: "p_s_doodle", label: "ノートのすみに、らくがきを1つかく",       tag: "らくがき",   iconEmoji: "✏️" },
+            { id: "p_s_sticker",label: "ノートにシールやマークを1つつける",       tag: "マーク1こ", iconEmoji: "⭐" }
+          ]
+        },
+        {
+          id: "p_afternoon",
+          title: "放課後：家についたあと",
+          desc: "家に帰ってからのじぶんのお世話は？",
+          choices: [
+            { id: "p_a_desk",  label: "机の上を1分だけととのえる",               tag: "机リセット", iconEmoji: "🧹" },
+            { id: "p_a_music", label: "すきな曲を1曲だけ流してきく",             tag: "1曲タイム",   iconEmoji: "🎧" }
+          ]
+        },
+        {
+          id: "p_night",
+          title: "夜：ねる前",
+          desc: "あしたのじぶんのために、どっち？",
+          choices: [
+            { id: "p_n_color", label: "あしたの服の「色」だけ先に決める",         tag: "あしたのカラー", iconEmoji: "🎨" },
+            { id: "p_n_good",  label: "きょうの「よかったこと」を1行メモる",     tag: "よかった1行",   iconEmoji: "📝" }
+          ]
+        }
+      ],
+      blue: [
+        {
+          id: "b_morning1",
+          title: "朝：起きたとき",
+          desc: "おなかと心への最初のお世話は？",
+          choices: [
+            { id: "b_m1_water", label: "起きたら水を1杯のむ",                       tag: "あさみず",         iconEmoji: "💧" },
+            { id: "b_m1_bite",  label: "ひと口だけでもごはんかパンを食べる",       tag: "ひと口モグ",       iconEmoji: "🍞" }
+          ]
+        },
+        {
+          id: "b_morning2",
+          title: "朝：出かける前",
+          desc: "外に出る前にどっち？",
+          choices: [
+            { id: "b_m2_snack_check", label: "カバンに今日の小さなおやつを1つ入れる", tag: "おやつチェック", iconEmoji: "🍪" },
+            { id: "b_m2_bottle",      label: "水筒かペットボトルをカバンに入れる",     tag: "水とうじゅんび", iconEmoji: "🥤" }
+          ]
+        },
+        {
+          id: "b_school",
+          title: "学校：休み時間",
+          desc: "休み時間のひと息タイムは？",
+          choices: [
+            { id: "b_s_sip",   label: "飲み物を3口だけゆっくりのむ",               tag: "3口ごくごく",   iconEmoji: "🫗" },
+            { id: "b_s_snack", label: "おやつを1つえらんで、よく味わう",           tag: "ごほうびおやつ", iconEmoji: "🍬" }
+          ]
+        },
+        {
+          id: "b_afternoon",
+          title: "放課後：家についたあと",
+          desc: "つかれたあと、どっちで休けい？",
+          choices: [
+            { id: "b_a_hotdrink", label: "あたたかい飲み物を作って3分休けい",     tag: "ホットドリンク", iconEmoji: "☕" },
+            { id: "b_a_cold",     label: "つめたい水をコップ1杯のんでリフレッシュ", tag: "つめたい一杯",   iconEmoji: "🧊" }
+          ]
+        },
+        {
+          id: "b_night",
+          title: "夜：ねる前",
+          desc: "あしたの食のお世話はどっち？",
+          choices: [
+            { id: "b_n_breakfast", label: "あした食べたい朝ごはんを1行メモる",         tag: "あさごはんメモ", iconEmoji: "🍙" },
+            { id: "b_n_dish",      label: "あした使うお皿やお弁当箱をテーブルに出しておく", tag: "うつわじゅんび", iconEmoji: "🍽️" }
+          ]
+        }
+      ],
+      green: [
+        {
+          id: "g_morning1",
+          title: "朝：起きたとき",
+          desc: "ねぼけたからだにどっち？",
+          choices: [
+            { id: "g_m1_stretch", label: "ふとんの上で手足をぐーっと伸ばす",             tag: "のびのび",       iconEmoji: "🧘" },
+            { id: "g_m1_ankle",   label: "足首をぐるぐる10回まわす",                     tag: "あしくびぐるぐる", iconEmoji: "🦶" }
+          ]
+        },
+        {
+          id: "g_morning2",
+          title: "朝：出かける準備",
+          desc: "出かける前、からだにどっち？",
+          choices: [
+            { id: "g_m2_posture", label: "出かける前に背すじをピーンと30秒たてる",      tag: "せすじピーン",   iconEmoji: "🧍" },
+            { id: "g_m2_water",   label: "水かお茶を1杯のんでから家を出る",              tag: "水分チャージ",   iconEmoji: "🥤" }
+          ]
+        },
+        {
+          id: "g_school",
+          title: "学校：休み時間",
+          desc: "休み時間のからだケアは？",
+          choices: [
+            { id: "g_s_shoulder", label: "肩を前後に10回まわす",                         tag: "かたグルグル",   iconEmoji: "💪" },
+            { id: "g_s_eyes",     label: "遠くを見る＋目をギュッとつぶるを3回くり返す", tag: "めケア",         iconEmoji: "👀" }
+          ]
+        },
+        {
+          id: "g_afternoon",
+          title: "放課後：家についたあと",
+          desc: "つかれたからだにどっち？",
+          choices: [
+            { id: "g_a_walk", label: "家のまわりを3〜5分だけ歩く",                      tag: "ちょい歩き",     iconEmoji: "🚶" },
+            { id: "g_a_leg",  label: "ふくらはぎを軽くもみほぐす",                      tag: "あしケア",       iconEmoji: "🦵" }
+          ]
+        },
+        {
+          id: "g_night",
+          title: "夜：ねる前",
+          desc: "ねむりのお世話はどっち？",
+          choices: [
+            { id: "g_n_screen", label: "ねる5分前に画面をとじて目をとじる",            tag: "画面おやすみ",   iconEmoji: "📵" },
+            { id: "g_n_breath", label: "深呼吸を3回してから布団に入る",                tag: "ねる前呼吸",     iconEmoji: "🌙" }
+          ]
+        }
+      ]
+    };
 
     // 状態
     const state = {
@@ -692,7 +834,7 @@
       currentDay: 1
     };
 
-    // DOM参照
+    // DOM
     const screenStart   = document.getElementById("screen-start");
     const screenScenes  = document.getElementById("screen-scenes");
     const screenLog     = document.getElementById("screen-log");
@@ -774,9 +916,11 @@
     }
     function spinCharacterOnce() {
       charVisualInner.classList.remove("spin-kuru");
-      requestAnimationFrame(() => {
+      requestAnimationFrame(function () {
         charVisualInner.classList.add("spin-kuru");
-        setTimeout(() => { charVisualInner.classList.remove("spin-kuru"); }, 700);
+        setTimeout(function () {
+          charVisualInner.classList.remove("spin-kuru");
+        }, 700);
       });
     }
     function triggerFireworks(x, y) {
@@ -795,48 +939,389 @@
         dot.style.setProperty("--tx", tx + "px");
         dot.style.setProperty("--ty", ty + "px");
         fireworksContainer.appendChild(dot);
-        setTimeout(() => fireworksContainer.removeChild(dot), 800);
+        setTimeout(function () {
+          fireworksContainer.removeChild(dot);
+        }, 800);
       }
     }
     function updateStartButtonState() {
       btnStartNext.disabled = !(state.characterId && state.courseDays);
     }
 
-    // --- シーン表示・ふりかえり・結果（前のコードと同じロジックを使う） ---
-    // ここは長くなるので、前回渡した renderScene / renderLogScreen / renderSummary などを
-    // そのまま下に貼り付けて使ってください。
+    function renderScene() {
+      if (!currentScenes || currentScenes.length === 0) return;
+      const scene = currentScenes[currentSceneIndex];
+      const char = getActiveCharacter();
+      if (char) updateCharVisual();
 
-    // ===== イベント設定 =====
-    courseCards.forEach(card => {
-      card.addEventListener("click", () => {
+      sceneStepLabel.textContent =
+        "シーン " + (currentSceneIndex + 1) + " / " + currentScenes.length;
+      sceneTitle.textContent = scene.title;
+      sceneDesc.textContent = scene.desc;
+
+      const stage = computeStage(state.currentDay);
+      let msgCore;
+      if (stage === "egg") {
+        msgCore = "あっためてくれる？どっちにする？";
+      } else if (stage === "larva") {
+        msgCore = "むずむず…きょうはどっち？";
+      } else {
+        msgCore = "きょうはどっちのお世話にする？";
+      }
+      sceneBubble.textContent =
+        (char ? char.name + "： " : "") + msgCore;
+
+      choiceListEl.innerHTML = "";
+      const selectedChoiceId = state.selections[scene.id];
+
+      scene.choices.forEach(function (ch) {
+        const li = document.createElement("li");
+        li.className = "choice-item";
+
+        const iconDiv = document.createElement("div");
+        iconDiv.className = "choice-icon-circle";
+        iconDiv.textContent = ch.iconEmoji || "＊";
+
+        const mainDiv = document.createElement("div");
+        mainDiv.className = "choice-main";
+
+        const labelDiv = document.createElement("div");
+        labelDiv.className = "choice-label";
+        labelDiv.textContent = ch.label;
+
+        const tagDiv = document.createElement("div");
+        tagDiv.className = "choice-tag";
+        tagDiv.textContent = "今日のお世話：" + ch.tag;
+
+        mainDiv.appendChild(labelDiv);
+        mainDiv.appendChild(tagDiv);
+
+        li.appendChild(iconDiv);
+        li.appendChild(mainDiv);
+
+        if (ch.id === selectedChoiceId) {
+          li.style.borderColor = "#ffb3cb";
+          li.style.backgroundColor = "#fff";
+        }
+
+        li.addEventListener("click", function () {
+          state.selections[scene.id] = ch.id;
+          Array.prototype.forEach.call(choiceListEl.children, function (child) {
+            child.style.borderColor = "#ddd";
+            child.style.backgroundColor = "#fafafa";
+          });
+          li.style.borderColor = "#ffb3cb";
+          li.style.backgroundColor = "#fff";
+
+          const rect = li.getBoundingClientRect();
+          triggerFireworks(rect.left + rect.width / 2, rect.top + rect.height / 2);
+
+          updateSceneNextButton();
+        });
+
+        choiceListEl.appendChild(li);
+      });
+
+      btnSceneBack.disabled = currentSceneIndex === 0;
+      updateSceneNextButton();
+    }
+
+    function updateSceneNextButton() {
+      if (!currentScenes || currentScenes.length === 0) return;
+      const scene = currentScenes[currentSceneIndex];
+      btnSceneNext.disabled = !state.selections[scene.id];
+      btnSceneNext.textContent =
+        currentSceneIndex === currentScenes.length - 1 ? "ふりかえりへ" : "つぎのシーンへ";
+    }
+
+    function renderLogScreen() {
+      const char = getActiveCharacter();
+      if (char) {
+        updateCharVisual();
+        document.getElementById("log-bubble").textContent =
+          char.name + "： どれくらいできた？";
+      }
+      logGroupsEl.innerHTML = "";
+      currentScenes.forEach(function (scene) {
+        const choiceId = state.selections[scene.id];
+        const choice = scene.choices.find(function (c) { return c.id === choiceId; });
+
+        const groupDiv = document.createElement("div");
+        groupDiv.className = "log-group";
+
+        const titleDiv = document.createElement("div");
+        titleDiv.className = "log-title";
+        titleDiv.textContent = scene.title;
+
+        const selectedDiv = document.createElement("div");
+        selectedDiv.className = "log-selected";
+        selectedDiv.textContent = choice
+          ? "きめたお世話： " + choice.label
+          : "まだえらばれていません。";
+
+        const buttonsDiv = document.createElement("div");
+        buttonsDiv.className = "log-buttons";
+
+        const levels = [
+          { id: "did",  label: "できた！" },
+          { id: "half", label: "半分できた" },
+          { id: "no",   label: "できなかった" }
+        ];
+
+        levels.forEach(function (lv) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "log-btn";
+          btn.textContent = lv.label;
+          btn.dataset.level = lv.id;
+          btn.dataset.sceneId = scene.id;
+
+          const saved = state.results[scene.id];
+          if (saved === lv.id) {
+            btn.classList.add("selected");
+          }
+
+          btn.addEventListener("click", function () {
+            state.results[scene.id] = lv.id;
+            Array.prototype.forEach.call(buttonsDiv.children, function (b) {
+              b.classList.toggle("selected", b.dataset.level === lv.id);
+            });
+            updateLogFinishButton();
+          });
+
+          buttonsDiv.appendChild(btn);
+        });
+
+        groupDiv.appendChild(titleDiv);
+        groupDiv.appendChild(selectedDiv);
+        groupDiv.appendChild(buttonsDiv);
+
+        logGroupsEl.appendChild(groupDiv);
+      });
+
+      updateLogFinishButton();
+    }
+
+    function updateLogFinishButton() {
+      const allFilled = currentScenes.every(function (sc) {
+        return !!state.results[sc.id];
+      });
+      btnLogFinish.disabled = !allFilled;
+    }
+
+    function renderSummary() {
+      const char = getActiveCharacter();
+      if (char) updateCharVisual();
+
+      const totals = { did: 0, half: 0, no: 0 };
+      currentScenes.forEach(function (scene) {
+        const r = state.results[scene.id];
+        if (r && totals.hasOwnProperty(r)) {
+          totals[r] += 1;
+        }
+      });
+
+      let heartGain = 0;
+      currentScenes.forEach(function (scene) {
+        const r = state.results[scene.id];
+        if (r === "did") heartGain += 2;
+        if (r === "half") heartGain += 1;
+      });
+      state.heart += heartGain;
+      updateHeartView();
+
+      const lines = [];
+
+      if (state.courseDays && state.characterId) {
+        lines.push(
+          "きょうは " +
+          state.currentDay +
+          "日目 / " +
+          state.courseDays +
+          "日コース。"
+        );
+      }
+
+      const stage = computeStage(state.currentDay);
+      lines.push("今の状態：" + getStageLabel(stage));
+
+      if (char) {
+        lines.push(char.name + " とすごした1日。");
+      }
+
+      const parts = [];
+      if (totals.did > 0)  parts.push("「できた！」：" + totals.did + " 件");
+      if (totals.half > 0) parts.push("「半分できた」：" + totals.half + " 件");
+      if (totals.no > 0)   parts.push("「できなかった」：" + totals.no + " 件");
+      if (parts.length > 0) lines.push(parts.join(" ／ "));
+
+      if (heartGain > 0) {
+        lines.push("きょうふえたハート：+" + heartGain);
+      } else {
+        lines.push("きょうはハートはふえなかった日。そんな日もOK。");
+      }
+
+      summaryMain.innerHTML = "";
+      lines.forEach(function (line) {
+        const p = document.createElement("p");
+        p.style.margin = "4px 0";
+        p.textContent = line;
+        summaryMain.appendChild(p);
+      });
+
+      summaryTags.innerHTML = "";
+      const tagSet = {};
+      currentScenes.forEach(function (scene) {
+        const choiceId = state.selections[scene.id];
+        const choice = scene.choices.find(function (c) { return c.id === choiceId; });
+        if (choice) tagSet[choice.tag] = true;
+      });
+      Object.keys(tagSet).forEach(function (tag) {
+        const div = document.createElement("div");
+        div.className = "chip";
+        div.textContent = "きょうのお世話：" + tag;
+        summaryTags.appendChild(div);
+      });
+
+      if (char) {
+        let charComment = "";
+        if (stage === "egg" && state.currentDay === 3) {
+          charComment = "ここまであっためてくれてありがとう。そろそろ変化がくるかも？";
+        } else if (stage === "larva" && state.currentDay === 4) {
+          charComment = "むずむず…たまごから出てきちゃった！これからもよろしく。";
+        } else if (stage === "larva" && state.currentDay === 6) {
+          charComment = "もう少しで本当の姿になれそうな気がする…？";
+        } else if (stage === "final" && state.currentDay === 7) {
+          charComment = "ついに本気モード！ここまで育ててくれてありがとう。";
+        } else if (totals.did >= 3) {
+          charComment = "よくがんばったね。からだも心もニコニコかも。";
+        } else if (totals.half >= 1) {
+          charComment = "「半分できた」に気づけたの、すごくいいよ。";
+        } else if (totals.no >= 1) {
+          charComment = "できない日も大事な1日。またあそぼ。";
+        } else {
+          charComment = "つぎはどんな1日にしようか？";
+        }
+        summaryBubble.textContent = char.name + "： " + charComment;
+      }
+
+      spinCharacterOnce();
+
+      if (state.courseDays && state.currentDay < state.courseDays) {
+        btnSummaryNextday.disabled = false;
+        btnSummaryNextday.textContent = "つぎの1日へ（続ける）";
+      } else if (state.courseDays && state.currentDay >= state.courseDays) {
+        btnSummaryNextday.disabled = true;
+        btnSummaryNextday.textContent = "コース完走！おつかれさま";
+      } else {
+        btnSummaryNextday.disabled = true;
+      }
+
+      updateDayLabel();
+    }
+
+    // イベント設定
+    courseCards.forEach(function (card) {
+      card.addEventListener("click", function () {
         state.courseDays = parseInt(card.dataset.courseDays, 10);
         state.currentDay = 1;
-        courseCards.forEach(c => c.classList.remove("selected"));
+        courseCards.forEach(function (c) { c.classList.remove("selected"); });
         card.classList.add("selected");
         updateDayLabel();
         updateStartButtonState();
       });
     });
 
-    charCards.forEach(card => {
-      card.addEventListener("click", () => {
+    charCards.forEach(function (card) {
+      card.addEventListener("click", function () {
         const id = card.dataset.charId;
         state.characterId = id;
-        charCards.forEach(c => c.classList.remove("selected"));
+        charCards.forEach(function (c) { c.classList.remove("selected"); });
         card.classList.add("selected");
-        const char = characters.find(c => c.id === id);
+        const char = characters.find(function (c) { return c.id === id; });
         if (char) {
-          startBubble.textContent = char.name + "：「" + char.tag + " をいっしょにやろう！」";
+          startBubble.textContent =
+            char.name + "：「" + char.tag + " をいっしょにやろう！」";
         }
         updateDayLabel();
         updateStartButtonState();
       });
     });
 
-    // ここに、btnStartNext / シーン遷移 / ふりかえり / 結果 のイベント処理も
-    // 前回コードと同じように続けて書いてください。
+    btnStartNext.addEventListener("click", function () {
+      if (!state.characterId || !state.courseDays) return;
+      state.heart = 0;
+      state.currentDay = 1;
+      state.selections = {};
+      state.results = {};
+      currentScenes = scenesByChar[state.characterId] || scenesByChar.pink;
+      currentSceneIndex = 0;
+      updateHeartView();
+      updateDayLabel();
+      updateCharVisual();
+      showScreen(screenScenes);
+      renderScene();
+    });
 
-    // 初期表示
+    btnSceneBack.addEventListener("click", function () {
+      if (currentSceneIndex === 0) {
+        showScreen(screenStart);
+      } else {
+        currentSceneIndex -= 1;
+        renderScene();
+      }
+    });
+
+    btnSceneNext.addEventListener("click", function () {
+      if (currentSceneIndex < currentScenes.length - 1) {
+        currentSceneIndex += 1;
+        renderScene();
+      } else {
+        showScreen(screenLog);
+        renderLogScreen();
+      }
+    });
+
+    btnLogBack.addEventListener("click", function () {
+      showScreen(screenScenes);
+      renderScene();
+    });
+
+    btnLogFinish.addEventListener("click", function () {
+      showScreen(screenSummary);
+      renderSummary();
+    });
+
+    btnSummaryNextday.addEventListener("click", function () {
+      if (!state.courseDays || state.currentDay >= state.courseDays) return;
+      state.currentDay += 1;
+      state.selections = {};
+      state.results = {};
+      currentSceneIndex = 0;
+      updateDayLabel();
+      showScreen(screenScenes);
+      renderScene();
+    });
+
+    btnSummaryRestart.addEventListener("click", function () {
+      state.characterId = null;
+      state.selections = {};
+      state.results = {};
+      state.heart = 0;
+      state.courseDays = null;
+      state.currentDay = 1;
+      currentScenes = [];
+      currentSceneIndex = 0;
+      updateHeartView();
+      updateDayLabel();
+      courseCards.forEach(function (c) { c.classList.remove("selected"); });
+      charCards.forEach(function (c) { c.classList.remove("selected"); });
+      startBubble.textContent = "コースと、いっしょにすごすキャラをえらんでね。";
+      updateStartButtonState();
+      showScreen(screenStart);
+    });
+
+    // 初期化
     updateHeartView();
     updateDayLabel();
     updateStartButtonState();
