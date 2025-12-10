@@ -591,4 +591,255 @@
         できたかどうか、えらんでね。
       </p>
 
-      <
+      <div class="bubble" id="log-bubble">
+        きょうのようす、教えて〜。
+      </div>
+
+      <div id="log-groups"></div>
+
+      <div class="nav-row">
+        <button id="btn-log-back" class="btn btn-secondary">シーンにもどる</button>
+        <button id="btn-log-finish" class="btn btn-primary" disabled>結果を見る</button>
+      </div>
+    </section>
+
+    <!-- 結果画面 -->
+    <section id="screen-summary" class="screen">
+      <h2>3. きょうのレポート</h2>
+
+      <div class="bubble" id="summary-bubble">
+        きょうのお世話、おつかれさま。
+      </div>
+
+      <div class="summary-box" id="summary-main"></div>
+      <div class="chips-row" id="summary-tags"></div>
+
+      <p class="small-note">
+        できなかった日も、「やろうと思った」だけでじゅうぶんえらいかもしれませんね。
+      </p>
+
+      <div class="nav-row">
+        <button id="btn-summary-nextday" class="btn btn-primary">
+          つぎの1日へ（続ける）
+        </button>
+        <button id="btn-summary-restart" class="btn btn-secondary">
+          コースをえらびなおす
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <!-- 花火コンテナ -->
+  <div id="fireworks-container"></div>
+
+  <script>
+    // キャラ情報
+    const characters = [
+      {
+        id: "pink",
+        name: "ピンクタイプ",
+        description: "おしゃれと気分アゲ担当。",
+        image: "public/char/pinkjoy.png",
+        tag: "じぶんらしさ",
+        themeColor: "#ff9ecb"
+      },
+      {
+        id: "blue",
+        name: "ブルータイプ",
+        description: "ごはんと休けい担当。",
+        image: "public/char/bluejoy.png",
+        tag: "ごほうびタイム",
+        themeColor: "#8ec5ff"
+      },
+      {
+        id: "green",
+        name: "グリーンタイプ",
+        description: "ねむりとからだ担当。",
+        image: "public/char/greenjoy.png",
+        tag: "からだケア",
+        themeColor: "#9fe8a6"
+      }
+    ];
+
+    // 卵→幼虫→完成
+    function computeStage(day) {
+      if (!day || day <= 3) return "egg";
+      if (day <= 6) return "larva";
+      return "final";
+    }
+    function getCharImagePath(char, stage) {
+      const base = "public/char/";
+      if (stage === "egg")   return base + char.id + "_egg.png";
+      if (stage === "larva") return base + char.id + "_larva.png";
+      return char.image;
+    }
+    function getStageLabel(stage) {
+      if (stage === "egg")   return "たまご期";
+      if (stage === "larva") return "幼虫期";
+      return "完成期";
+    }
+
+    // 各キャラ：1日5シーン×2択（前と同じ）
+    const scenesByChar = { /* ここは前に渡した scenesByChar と同じ内容をそのまま入れてください */ };
+
+    // 状態
+    const state = {
+      characterId: null,
+      selections: {},
+      results: {},
+      heart: 0,
+      courseDays: null,
+      currentDay: 1
+    };
+
+    // DOM参照
+    const screenStart   = document.getElementById("screen-start");
+    const screenScenes  = document.getElementById("screen-scenes");
+    const screenLog     = document.getElementById("screen-log");
+    const screenSummary = document.getElementById("screen-summary");
+
+    const dayLabelEl    = document.getElementById("day-label");
+    const heartCountEl  = document.getElementById("heart-count");
+
+    const charVisual        = document.getElementById("char-visual");
+    const charVisualInner   = document.getElementById("char-visual-inner");
+    const charVisualImg     = document.getElementById("char-visual-img");
+    const charVisualName    = document.getElementById("char-visual-name");
+    const charVisualTag     = document.getElementById("char-visual-tag");
+
+    const startBubble   = document.getElementById("start-bubble");
+    const btnStartNext  = document.getElementById("btn-start-next");
+
+    const courseCards   = document.querySelectorAll(".course-card");
+    const charCards     = document.querySelectorAll(".char-card");
+
+    const sceneStepLabel = document.getElementById("scene-step-label");
+    const sceneTitle     = document.getElementById("scene-title");
+    const sceneDesc      = document.getElementById("scene-desc");
+    const sceneBubble    = document.getElementById("scene-bubble");
+    const choiceListEl   = document.getElementById("choice-list");
+    const btnSceneBack   = document.getElementById("btn-scene-back");
+    const btnSceneNext   = document.getElementById("btn-scene-next");
+
+    const logGroupsEl    = document.getElementById("log-groups");
+    const btnLogBack     = document.getElementById("btn-log-back");
+    const btnLogFinish   = document.getElementById("btn-log-finish");
+
+    const summaryMain    = document.getElementById("summary-main");
+    const summaryTags    = document.getElementById("summary-tags");
+    const summaryBubble  = document.getElementById("summary-bubble");
+    const btnSummaryNextday = document.getElementById("btn-summary-nextday");
+    const btnSummaryRestart = document.getElementById("btn-summary-restart");
+
+    const fireworksContainer = document.getElementById("fireworks-container");
+
+    let currentScenes = [];
+    let currentSceneIndex = 0;
+
+    function showScreen(target) {
+      [screenStart, screenScenes, screenLog, screenSummary].forEach(s => s.classList.remove("active"));
+      target.classList.add("active");
+      if (target === screenStart || !state.characterId) {
+        charVisual.classList.add("hidden");
+      } else {
+        charVisual.classList.remove("hidden");
+      }
+    }
+
+    function getActiveCharacter() {
+      return characters.find(c => c.id === state.characterId);
+    }
+    function updateHeartView() {
+      heartCountEl.textContent = state.heart;
+    }
+    function updateDayLabel() {
+      if (!state.courseDays || !state.characterId) {
+        dayLabelEl.textContent = "Day -";
+      } else {
+        dayLabelEl.textContent =
+          state.currentDay + "日目 / " + state.courseDays + "日コース";
+      }
+    }
+    function updateCharVisual() {
+      const char = getActiveCharacter();
+      if (!char) return;
+      const stage = computeStage(state.currentDay);
+      const imgPath = getCharImagePath(char, stage);
+      charVisualImg.src = imgPath;
+      charVisualImg.alt = char.name;
+      charVisualName.textContent = char.name + "（" + getStageLabel(stage) + "）";
+      charVisualTag.textContent = char.tag;
+      charVisualInner.style.background =
+        "radial-gradient(circle at 30% 20%, #fff, " + char.themeColor + ")";
+    }
+    function spinCharacterOnce() {
+      charVisualInner.classList.remove("spin-kuru");
+      requestAnimationFrame(() => {
+        charVisualInner.classList.add("spin-kuru");
+        setTimeout(() => { charVisualInner.classList.remove("spin-kuru"); }, 700);
+      });
+    }
+    function triggerFireworks(x, y) {
+      const rect = document.body.getBoundingClientRect();
+      const cx = x || rect.width / 2;
+      const cy = y || rect.height / 2;
+      for (let i = 0; i < 12; i++) {
+        const dot = document.createElement("div");
+        dot.className = "firework-dot";
+        const angle = (Math.PI * 2 * i) / 12;
+        const distance = 80 + Math.random() * 40;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
+        dot.style.left = cx + "px";
+        dot.style.top  = cy + "px";
+        dot.style.setProperty("--tx", tx + "px");
+        dot.style.setProperty("--ty", ty + "px");
+        fireworksContainer.appendChild(dot);
+        setTimeout(() => fireworksContainer.removeChild(dot), 800);
+      }
+    }
+    function updateStartButtonState() {
+      btnStartNext.disabled = !(state.characterId && state.courseDays);
+    }
+
+    // --- シーン表示・ふりかえり・結果（前のコードと同じロジックを使う） ---
+    // ここは長くなるので、前回渡した renderScene / renderLogScreen / renderSummary などを
+    // そのまま下に貼り付けて使ってください。
+
+    // ===== イベント設定 =====
+    courseCards.forEach(card => {
+      card.addEventListener("click", () => {
+        state.courseDays = parseInt(card.dataset.courseDays, 10);
+        state.currentDay = 1;
+        courseCards.forEach(c => c.classList.remove("selected"));
+        card.classList.add("selected");
+        updateDayLabel();
+        updateStartButtonState();
+      });
+    });
+
+    charCards.forEach(card => {
+      card.addEventListener("click", () => {
+        const id = card.dataset.charId;
+        state.characterId = id;
+        charCards.forEach(c => c.classList.remove("selected"));
+        card.classList.add("selected");
+        const char = characters.find(c => c.id === id);
+        if (char) {
+          startBubble.textContent = char.name + "：「" + char.tag + " をいっしょにやろう！」";
+        }
+        updateDayLabel();
+        updateStartButtonState();
+      });
+    });
+
+    // ここに、btnStartNext / シーン遷移 / ふりかえり / 結果 のイベント処理も
+    // 前回コードと同じように続けて書いてください。
+
+    // 初期表示
+    updateHeartView();
+    updateDayLabel();
+    updateStartButtonState();
+  </script>
+</body>
+</html>
