@@ -112,6 +112,10 @@
       object-fit: contain;
       pointer-events: none;
     }
+    .char-visual-inner.spin-kuru {
+      /* ゆらゆら＋一瞬くるりん */
+      animation: char-sway 2.2s ease-in-out infinite, char-spin 0.6s ease-out;
+    }
     .char-visual-name {
       font-size: 15px;
       font-weight: 800;
@@ -125,11 +129,15 @@
       display: none;
     }
 
-    /* キャラのゆらゆらアニメ */
+    /* キャラのゆらゆら＆くるりんアニメ */
     @keyframes char-sway {
       0%   { transform: translateY(0); }
       50%  { transform: translateY(-6px); }
       100% { transform: translateY(0); }
+    }
+    @keyframes char-spin {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .char-list {
@@ -250,8 +258,8 @@
       border: 2px solid #ddd;
       background: #fafafa;
       display: flex;
-      align-items: flex-start;
-      gap: 8px;
+      align-items: center;
+      gap: 10px;
       cursor: pointer;
       transition: background 0.1s ease, border-color 0.1s ease, transform 0.05s ease;
     }
@@ -262,6 +270,18 @@
     }
     .choice-item input[type="radio"] {
       margin-top: 4px;
+    }
+    .choice-icon-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
     }
     .choice-main {
       flex: 1;
@@ -387,6 +407,40 @@
       color: #777;
       margin-top: 6px;
     }
+
+    /* 花火エフェクト */
+    #fireworks-container {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 999;
+    }
+    .firework-dot {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff, #ff7aa2);
+      opacity: 0;
+      animation: firework-pop 700ms ease-out forwards;
+    }
+    @keyframes firework-pop {
+      0% {
+        transform: translate(0, 0) scale(0.2);
+        opacity: 0;
+      }
+      30% {
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--tx), var(--ty)) scale(1);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -434,11 +488,11 @@
       </div>
     </section>
 
-    <!-- シーン画面：朝・放課後・寝る前の2択 -->
+    <!-- シーン画面：5シーン × 2択（＝10個のお世話） -->
     <section id="screen-scenes" class="screen">
       <div class="scene-header">
         <div>
-          <div class="scene-step" id="scene-step-label">シーン 1 / 3</div>
+          <div class="scene-step" id="scene-step-label">シーン 1 / 5</div>
           <div class="scene-title" id="scene-title"></div>
         </div>
       </div>
@@ -469,7 +523,7 @@
       </div>
 
       <div id="log-groups">
-        <!-- JSで3シーン分をつくる -->
+        <!-- JSで5シーン分をつくる -->
       </div>
 
       <div class="nav-row">
@@ -504,6 +558,9 @@
     </section>
   </div>
 
+  <!-- 花火コンテナ -->
+  <div id="fireworks-container"></div>
+
   <script>
     // 3色キャラ（ピンク・ブルー・グリーン）
     const characters = [
@@ -533,173 +590,296 @@
       }
     ];
 
-    // キャラごとに「お世話シーン」を変える
-    // id は morning / afternoon / night で共通だが、テキストと内容はタイプ別
+    // 各キャラ：1日10個のお世話（5シーン×2択）
+    // アクセサリー・小物系はアイコンつき（iconEmoji）
     const scenesByChar = {
       pink: [
         {
-          id: "morning",
-          stepLabel: "シーン 1 / 3",
-          title: "朝：出かける前",
-          desc: "朝いちばん、どっちで気分をととのえる？",
+          id: "p_morning1",
+          title: "朝：起きたとき",
+          desc: "目がさめたとき、まずどっち？",
           choices: [
             {
-              id: "p_m_acce",
-              label: "きょうの気分で、アクセか小物を1つえらぶ",
-              tag: "ワンポイントおしゃれ"
+              id: "p_m1_smile",
+              label: "ふとんの中で、ニコッと1回わらう",
+              tag: "あさニコッ",
+              iconEmoji: "😊"
             },
             {
-              id: "p_m_mirror",
-              label: "鏡を見て、ニコッと1回わらってみる",
-              tag: "あさニコッ"
+              id: "p_m1_breath",
+              label: "深呼吸を3回してから起きあがる",
+              tag: "あさの深呼吸",
+              iconEmoji: "🌬️"
             }
           ]
         },
         {
-          id: "afternoon",
-          stepLabel: "シーン 2 / 3",
-          title: "放課後：家についたあと",
-          desc: "つかれたあとの気分、お世話するなら？",
+          id: "p_morning2",
+          title: "朝：出かける準備",
+          desc: "出かける前に、じぶんにどんなお世話？",
           choices: [
             {
-              id: "p_a_doodle",
-              label: "ノートのすみに、らくがきを1つかく",
-              tag: "らくがきタイム"
+              id: "p_m2_accessory",
+              label: "アクセ・小物を1つえらぶ（ヘアピン・イヤホンなど）",
+              tag: "小物をえらぶ",
+              iconEmoji: "🎀"
             },
+            {
+              id: "p_m2_mirror",
+              label: "鏡を見て「きょうもいける」と小声で言う",
+              tag: "じぶんエール",
+              iconEmoji: "🪞"
+            }
+          ]
+        },
+        {
+          id: "p_school",
+          title: "学校：休み時間",
+          desc: "ちょっと空いた時間に、どっち？",
+          choices: [
+            {
+              id: "p_s_doodle",
+              label: "ノートのすみに、らくがきを1つかく",
+              tag: "らくがき",
+              iconEmoji: "✏️"
+            },
+            {
+              id: "p_s_sticker",
+              label: "スケジュール帳やノートにシールやマークを1つつける",
+              tag: "マーク1こ",
+              iconEmoji: "⭐"
+            }
+          ]
+        },
+        {
+          id: "p_afternoon",
+          title: "放課後：家についたあと",
+          desc: "家に帰ってからのじぶんのお世話は？",
+          choices: [
             {
               id: "p_a_desk",
               label: "机の上を1分だけととのえる",
-              tag: "デスクお片づけ"
+              tag: "机リセット",
+              iconEmoji: "🧹"
+            },
+            {
+              id: "p_a_music",
+              label: "すきな曲を1曲だけ流してきく",
+              tag: "1曲タイム",
+              iconEmoji: "🎧"
             }
           ]
         },
         {
-          id: "night",
-          stepLabel: "シーン 3 / 3",
+          id: "p_night",
           title: "夜：ねる前",
-          desc: "あしたの「じぶんらしさ」のためにどっち？",
+          desc: "あしたのじぶんのために、どっち？",
           choices: [
             {
               id: "p_n_color",
               label: "あしたの服の「色」だけ先に決める",
-              tag: "あしたのカラー"
+              tag: "あしたのカラー",
+              iconEmoji: "🎨"
             },
             {
               id: "p_n_good",
               label: "きょうの「よかったこと」を1行メモる",
-              tag: "よかった1行メモ"
+              tag: "よかった1行",
+              iconEmoji: "📝"
             }
           ]
         }
       ],
       blue: [
         {
-          id: "morning",
-          stepLabel: "シーン 1 / 3",
+          id: "b_morning1",
+          title: "朝：起きたとき",
+          desc: "おなかと心への最初のお世話は？",
+          choices: [
+            {
+              id: "b_m1_water",
+              label: "起きたら水を1杯のむ",
+              tag: "あさみず",
+              iconEmoji: "💧"
+            },
+            {
+              id: "b_m1_bite",
+              label: "ひと口だけでもごはんかパンを食べる",
+              tag: "ひと口モグ",
+              iconEmoji: "🍞"
+            }
+          ]
+        },
+        {
+          id: "b_morning2",
           title: "朝：出かける前",
-          desc: "朝ごはんまわりのお世話、どっちにする？",
+          desc: "外に出る前にどっち？",
           choices: [
             {
-              id: "b_m_water",
-              label: "朝ごはんの前に水を1杯のむ",
-              tag: "あさみず"
+              id: "b_m2_snack_check",
+              label: "カバンに今日の小さなおやつを1つ入れる",
+              tag: "おやつチェック",
+              iconEmoji: "🍪"
             },
             {
-              id: "b_m_bite",
-              label: "ひと口だけでも、ごはんかパンを食べる",
-              tag: "ひと口モグ"
+              id: "b_m2_bottle",
+              label: "水筒かペットボトルをカバンに入れる",
+              tag: "水とうじゅんび",
+              iconEmoji: "🥤"
             }
           ]
         },
         {
-          id: "afternoon",
-          stepLabel: "シーン 2 / 3",
+          id: "b_school",
+          title: "学校：休み時間",
+          desc: "休み時間のひと息タイムは？",
+          choices: [
+            {
+              id: "b_s_sip",
+              label: "飲み物を3口だけゆっくりのむ",
+              tag: "3口ごくごく",
+              iconEmoji: "🫗"
+            },
+            {
+              id: "b_s_snack",
+              label: "おやつを1つえらんで、よく味わう",
+              tag: "ごほうびおやつ",
+              iconEmoji: "🍬"
+            }
+          ]
+        },
+        {
+          id: "b_afternoon",
           title: "放課後：家についたあと",
-          desc: "つかれたおなかと心に、どっち？",
+          desc: "つかれたあと、どっちで休けい？",
           choices: [
             {
-              id: "b_a_snack",
-              label: "ごほうびおやつを1つえらんで、じっくり味わう",
-              tag: "ごほうびおやつ"
+              id: "b_a_hotdrink",
+              label: "あたたかい飲み物を作って3分休けい",
+              tag: "ホットドリンク",
+              iconEmoji: "☕"
             },
             {
-              id: "b_a_tea",
-              label: "あたたかい飲み物を作って、3分だけ休けい",
-              tag: "ホットドリンク"
+              id: "b_a_cold",
+              label: "つめたい水をコップ1杯のんでリフレッシュ",
+              tag: "つめたい一杯",
+              iconEmoji: "🧊"
             }
           ]
         },
         {
-          id: "night",
-          stepLabel: "シーン 3 / 3",
+          id: "b_night",
           title: "夜：ねる前",
-          desc: "あしたの食のために、どっちをする？",
+          desc: "あしたの食のお世話はどっち？",
           choices: [
             {
               id: "b_n_breakfast",
               label: "あした食べたい朝ごはんを1行メモる",
-              tag: "あさごはん計画"
+              tag: "あさごはんメモ",
+              iconEmoji: "🍙"
             },
             {
-              id: "b_n_bottle",
-              label: "あした持っていく水筒・ペットボトルを出しておく",
-              tag: "水とうじゅんび"
+              id: "b_n_dish",
+              label: "あした使うお弁当箱やお皿をテーブルの上に出しておく",
+              tag: "うつわじゅんび",
+              iconEmoji: "🍽️"
             }
           ]
         }
       ],
       green: [
         {
-          id: "morning",
-          stepLabel: "シーン 1 / 3",
-          title: "朝：出かける前",
-          desc: "からだを起こすお世話、どっち？",
+          id: "g_morning1",
+          title: "朝：起きたとき",
+          desc: "ねぼけたからだにどっち？",
           choices: [
             {
-              id: "g_m_stretch",
-              label: "肩と首をゆっくり10回まわす",
-              tag: "かるいストレッチ"
+              id: "g_m1_stretch",
+              label: "ふとんの上で手足をぐーっと伸ばす",
+              tag: "のびのび",
+              iconEmoji: "🧘"
             },
             {
-              id: "g_m_breath",
-              label: "深呼吸を3回してから立ち上がる",
-              tag: "あさの深呼吸"
+              id: "g_m1_ankle",
+              label: "足首をぐるぐる10回まわす",
+              tag: "あしくびぐるぐる",
+              iconEmoji: "🦶"
             }
           ]
         },
         {
-          id: "afternoon",
-          stepLabel: "シーン 2 / 3",
+          id: "g_morning2",
+          title: "朝：出かける準備",
+          desc: "出かける前、からだにどっち？",
+          choices: [
+            {
+              id: "g_m2_posture",
+              label: "出かける前に背すじをピーンと30秒たてる",
+              tag: "せすじピーン",
+              iconEmoji: "🧍"
+            },
+            {
+              id: "g_m2_water",
+              label: "水かお茶を1杯のんでから家を出る",
+              tag: "水分チャージ",
+              iconEmoji: "🥤"
+            }
+          ]
+        },
+        {
+          id: "g_school",
+          title: "学校：休み時間",
+          desc: "休み時間のからだケアは？",
+          choices: [
+            {
+              id: "g_s_shoulder",
+              label: "肩を前後に10回まわす",
+              tag: "かたグルグル",
+              iconEmoji: "💪"
+            },
+            {
+              id: "g_s_eyes",
+              label: "遠くを見る＋目をギュッとつぶるを3回くり返す",
+              tag: "めケア",
+              iconEmoji: "👀"
+            }
+          ]
+        },
+        {
+          id: "g_afternoon",
           title: "放課後：家についたあと",
-          desc: "つかれたからだに、どっち？",
+          desc: "つかれたからだにどっち？",
           choices: [
             {
               id: "g_a_walk",
               label: "家のまわりを3〜5分だけ歩く",
-              tag: "ちょい歩き"
+              tag: "ちょい歩き",
+              iconEmoji: "🚶"
             },
             {
-              id: "g_a_posture",
-              label: "背すじをのばして30秒すわる",
-              tag: "せすじピーン"
+              id: "g_a_leg",
+              label: "ふくらはぎを軽くもみほぐす",
+              tag: "あしケア",
+              iconEmoji: "🦵"
             }
           ]
         },
         {
-          id: "night",
-          stepLabel: "シーン 3 / 3",
+          id: "g_night",
           title: "夜：ねる前",
-          desc: "ねむりのお世話、どっちにする？",
+          desc: "ねむりのお世話はどっち？",
           choices: [
             {
               id: "g_n_screen",
               label: "ねる5分前に画面をとじて目をとじる",
-              tag: "画面おやすみ"
+              tag: "画面おやすみ",
+              iconEmoji: "📵"
             },
             {
-              id: "g_n_leg",
-              label: "ふくらはぎを軽くもみほぐす",
-              tag: "あしケア"
+              id: "g_n_breath",
+              label: "深呼吸を3回してから布団に入る",
+              tag: "ねる前呼吸",
+              iconEmoji: "🌙"
             }
           ]
         }
@@ -717,7 +897,7 @@
     // 今選ばれているキャラ用のシーンセット
     let currentScenes = [];
 
-    // DOM 要素取得
+    // DOM 要素
     const screenStart   = document.getElementById("screen-start");
     const screenScenes  = document.getElementById("screen-scenes");
     const screenLog     = document.getElementById("screen-log");
@@ -751,6 +931,8 @@
     const charVisualName = document.getElementById("char-visual-name");
     const charVisualTag = document.getElementById("char-visual-tag");
 
+    const fireworksContainer = document.getElementById("fireworks-container");
+
     let currentSceneIndex = 0;
 
     function showScreen(screen) {
@@ -782,7 +964,46 @@
       charVisualImg.alt = char.name;
       charVisualName.textContent = char.name;
       charVisualTag.textContent = char.tag;
-      charVisualInner.style.background = `radial-gradient(circle at 30% 20%, #fff, ${char.themeColor})`;
+      charVisualInner.style.background =
+        `radial-gradient(circle at 30% 20%, #fff, ${char.themeColor})`;
+    }
+
+    function spinCharacterOnce() {
+      charVisualInner.classList.remove("spin-kuru");
+      requestAnimationFrame(() => {
+        charVisualInner.classList.add("spin-kuru");
+        setTimeout(() => {
+          charVisualInner.classList.remove("spin-kuru");
+        }, 700);
+      });
+    }
+
+    // 花火エフェクト
+    function triggerFireworks(x, y) {
+      const rect = document.body.getBoundingClientRect();
+      const centerX = x || rect.width / 2;
+      const centerY = y || rect.height / 2;
+
+      for (let i = 0; i < 12; i++) {
+        const dot = document.createElement("div");
+        dot.className = "firework-dot";
+
+        const angle = (Math.PI * 2 * i) / 12;
+        const distance = 80 + Math.random() * 40;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
+
+        dot.style.left = centerX + "px";
+        dot.style.top = centerY + "px";
+        dot.style.setProperty("--tx", tx + "px");
+        dot.style.setProperty("--ty", ty + "px");
+
+        fireworksContainer.appendChild(dot);
+
+        setTimeout(() => {
+          fireworksContainer.removeChild(dot);
+        }, 800);
+      }
     }
 
     // キャラカード表示
@@ -838,7 +1059,7 @@
       });
     }
 
-    // シーン表示（2択）
+    // シーン表示（2択×5シーン）
     function renderScene() {
       if (!currentScenes || currentScenes.length === 0) return;
       const scene = currentScenes[currentSceneIndex];
@@ -847,16 +1068,19 @@
         updateCharVisual();
       }
 
-      sceneStepLabel.textContent = scene.stepLabel;
+      sceneStepLabel.textContent = `シーン ${currentSceneIndex + 1} / ${currentScenes.length}`;
       sceneTitle.textContent = scene.title;
       sceneDesc.textContent = scene.desc;
 
-      const sceneMessages = {
-        morning: "朝いちばん、どっちにする？",
-        afternoon: "おつかれさま。どっちで一息つく？",
-        night: "ねる前、あしたのためにどっちする？"
-      };
-      sceneBubble.textContent = (char ? char.name + "： " : "") + (sceneMessages[scene.id] || "");
+      const sceneMessages = [
+        "どっちからはじめる？",
+        "つぎのお世話はどっち？",
+        "まだあと少し、どっちにする？",
+        "あと少しだけお世話タイム。",
+        "さいごの1こ、どっちにする？"
+      ];
+      const msg = sceneMessages[currentSceneIndex] || "どっちにする？";
+      sceneBubble.textContent = (char ? char.name + "： " : "") + msg;
 
       choiceListEl.innerHTML = "";
       const selectedChoiceId = state.selections[scene.id];
@@ -870,6 +1094,10 @@
         input.name = "choice-" + scene.id;
         input.value = ch.id;
         input.checked = ch.id === selectedChoiceId;
+
+        const iconDiv = document.createElement("div");
+        iconDiv.className = "choice-icon-circle";
+        iconDiv.textContent = ch.iconEmoji || "＊";
 
         const mainDiv = document.createElement("div");
         mainDiv.className = "choice-main";
@@ -885,19 +1113,24 @@
         mainDiv.appendChild(labelDiv);
         mainDiv.appendChild(tagDiv);
 
+        li.appendChild(iconDiv);
         li.appendChild(input);
         li.appendChild(mainDiv);
 
-        li.addEventListener("click", () => {
+        const selectHandler = (event) => {
           input.checked = true;
           state.selections[scene.id] = ch.id;
           updateSceneNextButton();
-        });
 
-        input.addEventListener("change", () => {
-          state.selections[scene.id] = ch.id;
-          updateSceneNextButton();
-        });
+          // 花火：選んだときにぱーん
+          const rect = li.getBoundingClientRect();
+          const x = rect.left + rect.width / 2;
+          const y = rect.top + rect.height / 2;
+          triggerFireworks(x, y);
+        };
+
+        li.addEventListener("click", selectHandler);
+        input.addEventListener("change", selectHandler);
 
         choiceListEl.appendChild(li);
       });
@@ -1072,7 +1305,7 @@
 
       if (char) {
         let charComment = "";
-        if (totals.did >= 2) {
+        if (totals.did >= 3) {
           charComment = "よくがんばったね。からだも心もニコニコかも。";
         } else if (totals.half >= 1) {
           charComment = "「半分できた」に気づけたの、すごくいいよ。";
@@ -1083,6 +1316,9 @@
         }
         summaryBubble.textContent = char.name + "： " + charComment;
       }
+
+      // 最後にキャラがくるりん
+      spinCharacterOnce();
     }
 
     // イベント設定
@@ -1092,9 +1328,11 @@
 
       btnStartNext.addEventListener("click", () => {
         if (!state.characterId) return;
-        // キャラごとのシーンをセット
+        // キャラごとのシーンをセット（1日10個）
         currentScenes = scenesByChar[state.characterId] || scenesByChar["pink"];
         currentSceneIndex = 0;
+        state.selections = {};
+        state.results = {};
         showScreen(screenScenes);
         updateCharVisual();
         renderScene();
