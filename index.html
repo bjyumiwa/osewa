@@ -116,7 +116,7 @@
       pointer-events: none;
     }
     .char-visual-inner.spin-kuru {
-      animation: char-sway 2.2s ease-in-out infinite, char-spin 0.6s.ease-out;
+      animation: char-sway 2.2s ease-in-out infinite, char-spin 0.6s ease-out;
     }
     .char-visual-name {
       font-size: 15px;
@@ -523,7 +523,22 @@
       <div id="char-visual-tag" class="char-visual-tag"></div>
     </div>
 
-    <section id="screen-start" class="screen active">
+    <section id="screen-resume" class="screen active">
+      <h2>つづきがあります</h2>
+      <div class="bubble" id="resume-bubble">
+        途中までのデータが見つかりました。どっちにする？
+      </div>
+      <div class="summary-box" id="resume-info"></div>
+      <div class="nav-row">
+        <button id="btn-resume-continue" class="btn btn-primary">つづきから ▶</button>
+        <button id="btn-resume-new" class="btn btn-secondary">はじめから</button>
+      </div>
+      <p class="small-note">
+        「はじめから」を選ぶと、保存されている途中データは消えます。
+      </p>
+    </section>
+
+    <section id="screen-start" class="screen">
       <h2>1. コースとキャラをえらぶ</h2>
       <p style="font-size:13px; color:#444; font-weight:600; margin-bottom:6px;">
         ⏰ 何日いっしょにくらす？
@@ -609,7 +624,7 @@
       <ul class="choice-list" id="choice-list"></ul>
 
       <div class="nav-row">
-        <button id="btn-scene-back" class="btn.btn-secondary">◀ もどる</button>
+        <button id="btn-scene-back" class="btn btn-secondary">◀ もどる</button>
         <button id="btn-scene-next" class="btn btn-primary" disabled>つぎへ ▶</button>
       </div>
     </section>
@@ -687,7 +702,7 @@
       }
     ];
 
-    // 3日まで卵 / 6日まで幼虫 / それ以降 成体（あとで3か月仕様にも広げられます）
+    // 3日まで卵 / 6日まで幼虫 / それ以降 成体
     function computeStage(day) {
       if (!day || day <= 3) return "egg";
       if (day <= 6) return "larva";
@@ -708,325 +723,150 @@
     // ここに「くだらないお世話」をたくさん
     const scenesByChar = {
       blue: [
-        {
-          id: "b_breakfast",
-          title: "朝ごはん",
-          desc: "あなたはどっち？ キャラにも同じのを🍽",
-          choices: [
-            { id: "b_bf_onigiri", label: "🍙 おにぎり", tag: "朝ごはん", iconEmoji: "🍙" },
-            { id: "b_bf_bread",   label: "🥐 パン",     tag: "朝ごはん", iconEmoji: "🥐" }
-          ]
-        },
-        {
-          id: "b_drink",
-          title: "のみもの",
-          desc: "朝いちばんの一杯は？",
-          choices: [
-            { id: "b_drink_water", label: "💧 水",   tag: "水分チャージ", iconEmoji: "💧" },
-            { id: "b_drink_tea",   label: "🍵 お茶", tag: "水分チャージ", iconEmoji: "🍵" }
-          ]
-        },
-        {
-          id: "b_school_snack",
-          title: "休み時間",
-          desc: "ひと休み、ごほうびタイム。",
-          choices: [
-            { id: "b_snack_cookie", label: "🍪 クッキー1枚", tag: "おやつ", iconEmoji: "🍪" },
-            { id: "b_snack_candy",  label: "🍬 キャンディ1こ", tag: "おやつ", iconEmoji: "🍬" }
-          ]
-        },
-        {
-          id: "b_after",
-          title: "放課後おやつ",
-          desc: "かえってきたら、どっち？",
-          choices: [
-            { id: "b_after_ice",  label: "🍨 アイス", tag: "ごほうび", iconEmoji: "🍨" },
-            { id: "b_after_fruit",label: "🍎 くだもの", tag: "ごほうび", iconEmoji: "🍎" }
-          ]
-        },
-        {
-          id: "b_night",
-          title: "夜のひとくち",
-          desc: "ねる前のちょっとだけ。",
-          choices: [
-            { id: "b_night_milk", label: "🥛 ホットミルク", tag: "ねる前ケア", iconEmoji: "🥛" },
-            { id: "b_night_none", label: "🚰 水だけにする", tag: "ねる前ケア", iconEmoji: "🚰" }
-          ]
-        },
-        {
-          id: "b_lunch_main",
-          title: "お昼のメイン",
-          desc: "メニューのイメトレ。",
-          choices: [
-            { id: "b_lunch_curry", label: "🍛 カレー", tag: "おひる", iconEmoji: "🍛" },
-            { id: "b_lunch_pasta", label: "🍝 パスタ", tag: "おひる", iconEmoji: "🍝" }
-          ]
-        },
-        {
-          id: "b_pack_snack",
-          title: "持っていくなら",
-          desc: "かばんにしのばせる？",
-          choices: [
-            { id: "b_snack_senbei", label: "🍘 せんべい1まい", tag: "携帯おやつ", iconEmoji: "🍘" },
-            { id: "b_snack_choco",  label: "🍫 チョコ1こ",    tag: "携帯おやつ", iconEmoji: "🍫" }
-          ]
-        },
-        {
-          id: "b_after_drink",
-          title: "帰りの一杯",
-          desc: "のどカラカラ。",
-          choices: [
-            { id: "b_af_juice", label: "🥤 ジュース", tag: "のみもの", iconEmoji: "🥤" },
-            { id: "b_af_water", label: "🚰 水",       tag: "のみもの", iconEmoji: "🚰" }
-          ]
-        },
-        {
-          id: "b_bottle_check",
-          title: "水とうチェック",
-          desc: "きょうの残り。",
-          choices: [
-            { id: "b_bt_refill", label: "💧 つぎ足す",      tag: "水とう", iconEmoji: "💧" },
-            { id: "b_bt_later",  label: "😅 そのままにする", tag: "水とう", iconEmoji: "😅" }
-          ]
-        },
-        {
-          id: "b_soup",
-          title: "スープがあるなら",
-          desc: "どっちをえらぶ？",
-          choices: [
-            { id: "b_soup_warm", label: "🍲 あったかスープ", tag: "スープ", iconEmoji: "🍲" },
-            { id: "b_soup_cold", label: "🧊 つめたいのみもの", tag: "スープ", iconEmoji: "🧊" }
-          ]
-        },
-        {
-          id: "b_snack_plate",
-          title: "おやつの出し方",
-          desc: "ちょっとだけこだわる？",
-          choices: [
-            { id: "b_plate_dish", label: "🍪 おさらにのせる", tag: "おやつ", iconEmoji: "🍪" },
-            { id: "b_plate_bag",  label: "🙃 袋のまま",        tag: "おやつ", iconEmoji: "🙃" }
-          ]
-        },
-        {
-          id: "b_weekend_treat",
-          title: "週末のごほうび",
-          desc: "イメトレだけでもOK。",
-          choices: [
-            { id: "b_treat_sushi", label: "🍣 ちょいリッチ", tag: "ごほうび", iconEmoji: "🍣" },
-            { id: "b_treat_pizza", label: "🍕 ジャンクにいく", tag: "ごほうび", iconEmoji: "🍕" }
-          ]
-        }
+        { id: "b_breakfast", title: "朝ごはん", desc: "あなたはどっち？ キャラにも同じのを🍽", choices: [
+          { id: "b_bf_onigiri", label: "🍙 おにぎり", tag: "朝ごはん", iconEmoji: "🍙" },
+          { id: "b_bf_bread",   label: "🥐 パン",     tag: "朝ごはん", iconEmoji: "🥐" }
+        ]},
+        { id: "b_drink", title: "のみもの", desc: "朝いちばんの一杯は？", choices: [
+          { id: "b_drink_water", label: "💧 水",   tag: "水分チャージ", iconEmoji: "💧" },
+          { id: "b_drink_tea",   label: "🍵 お茶", tag: "水分チャージ", iconEmoji: "🍵" }
+        ]},
+        { id: "b_school_snack", title: "休み時間", desc: "ひと休み、ごほうびタイム。", choices: [
+          { id: "b_snack_cookie", label: "🍪 クッキー1枚", tag: "おやつ", iconEmoji: "🍪" },
+          { id: "b_snack_candy",  label: "🍬 キャンディ1こ", tag: "おやつ", iconEmoji: "🍬" }
+        ]},
+        { id: "b_after", title: "放課後おやつ", desc: "かえってきたら、どっち？", choices: [
+          { id: "b_after_ice",  label: "🍨 アイス", tag: "ごほうび", iconEmoji: "🍨" },
+          { id: "b_after_fruit",label: "🍎 くだもの", tag: "ごほうび", iconEmoji: "🍎" }
+        ]},
+        { id: "b_night", title: "夜のひとくち", desc: "ねる前のちょっとだけ。", choices: [
+          { id: "b_night_milk", label: "🥛 ホットミルク", tag: "ねる前ケア", iconEmoji: "🥛" },
+          { id: "b_night_none", label: "🚰 水だけにする", tag: "ねる前ケア", iconEmoji: "🚰" }
+        ]},
+        { id: "b_lunch_main", title: "お昼のメイン", desc: "メニューのイメトレ。", choices: [
+          { id: "b_lunch_curry", label: "🍛 カレー", tag: "おひる", iconEmoji: "🍛" },
+          { id: "b_lunch_pasta", label: "🍝 パスタ", tag: "おひる", iconEmoji: "🍝" }
+        ]},
+        { id: "b_pack_snack", title: "持っていくなら", desc: "かばんにしのばせる？", choices: [
+          { id: "b_snack_senbei", label: "🍘 せんべい1まい", tag: "携帯おやつ", iconEmoji: "🍘" },
+          { id: "b_snack_choco",  label: "🍫 チョコ1こ",    tag: "携帯おやつ", iconEmoji: "🍫" }
+        ]},
+        { id: "b_after_drink", title: "帰りの一杯", desc: "のどカラカラ。", choices: [
+          { id: "b_af_juice", label: "🥤 ジュース", tag: "のみもの", iconEmoji: "🥤" },
+          { id: "b_af_water", label: "🚰 水",       tag: "のみもの", iconEmoji: "🚰" }
+        ]},
+        { id: "b_bottle_check", title: "水とうチェック", desc: "きょうの残り。", choices: [
+          { id: "b_bt_refill", label: "💧 つぎ足す",      tag: "水とう", iconEmoji: "💧" },
+          { id: "b_bt_later",  label: "😅 そのままにする", tag: "水とう", iconEmoji: "😅" }
+        ]},
+        { id: "b_soup", title: "スープがあるなら", desc: "どっちをえらぶ？", choices: [
+          { id: "b_soup_warm", label: "🍲 あったかスープ", tag: "スープ", iconEmoji: "🍲" },
+          { id: "b_soup_cold", label: "🧊 つめたいのみもの", tag: "スープ", iconEmoji: "🧊" }
+        ]},
+        { id: "b_snack_plate", title: "おやつの出し方", desc: "ちょっとだけこだわる？", choices: [
+          { id: "b_plate_dish", label: "🍪 おさらにのせる", tag: "おやつ", iconEmoji: "🍪" },
+          { id: "b_plate_bag",  label: "🙃 袋のまま",        tag: "おやつ", iconEmoji: "🙃" }
+        ]},
+        { id: "b_weekend_treat", title: "週末のごほうび", desc: "イメトレだけでもOK。", choices: [
+          { id: "b_treat_sushi", label: "🍣 ちょいリッチ", tag: "ごほうび", iconEmoji: "🍣" },
+          { id: "b_treat_pizza", label: "🍕 ジャンクにいく", tag: "ごほうび", iconEmoji: "🍕" }
+        ]}
       ],
       pink: [
-        {
-          id: "p_morning_color",
-          title: "朝のカラー",
-          desc: "きょうはどっち気分？",
-          choices: [
-            { id: "p_color_warm", label: "🧡 あったか色", tag: "きょうの色", iconEmoji: "🧡" },
-            { id: "p_color_cool", label: "💙 ひんやり色", tag: "きょうの色", iconEmoji: "💙" }
-          ]
-        },
-        {
-          id: "p_accessory",
-          title: "アクセ1こ",
-          desc: "つけるならどっち？",
-          choices: [
-            { id: "p_acc_hair", label: "🎀 ヘアアイテム", tag: "アクセ", iconEmoji: "🎀" },
-            { id: "p_acc_ear",  label: "🎧 みみまわり",   tag: "アクセ", iconEmoji: "🎧" }
-          ]
-        },
-        {
-          id: "p_school_note",
-          title: "ノート",
-          desc: "ページのすみに、ちょこっと。",
-          choices: [
-            { id: "p_note_star", label: "⭐ ほしマーク", tag: "ワンポイント", iconEmoji: "⭐" },
-            { id: "p_note_heart",label: "💖 ハート",    tag: "ワンポイント", iconEmoji: "💖" }
-          ]
-        },
-        {
-          id: "p_after_music",
-          title: "放課後ミニタイム",
-          desc: "気分上げるなら？",
-          choices: [
-            { id: "p_music_dance", label: "💃 テンション高め", tag: "音楽", iconEmoji: "💃" },
-            { id: "p_music_relax", label: "😌 まったり曲",     tag: "音楽", iconEmoji: "😌" }
-          ]
-        },
-        {
-          id: "p_night_good",
-          title: "ねる前ひとこと",
-          desc: "じぶんにもキャラにも。",
-          choices: [
-            { id: "p_night_thx", label: "🙏 「きょうもおつかれ」", tag: "ねぎらい", iconEmoji: "🙏" },
-            { id: "p_night_ok",  label: "👌 「まあまあOK」",       tag: "ねぎらい", iconEmoji: "👌" }
-          ]
-        },
-        {
-          id: "p_socks",
-          title: "くつ下",
-          desc: "きょうの足もと。",
-          choices: [
-            { id: "p_socks_color", label: "🧦 カラフル",   tag: "足もと", iconEmoji: "🧦" },
-            { id: "p_socks_simple",label: "⚪ シンプル",   tag: "足もと", iconEmoji: "⚪" }
-          ]
-        },
-        {
-          id: "p_bag_charm",
-          title: "カバンのチャーム",
-          desc: "つける？つけない？",
-          choices: [
-            { id: "p_charm_on",  label: "🧸 つける",   tag: "チャーム", iconEmoji: "🧸" },
-            { id: "p_charm_off", label: "🙈 つけない", tag: "チャーム", iconEmoji: "🙈" }
-          ]
-        },
-        {
-          id: "p_hair_style",
-          title: "前髪",
-          desc: "気になるときは？",
-          choices: [
-            { id: "p_hair_tie",   label: "✂ まとめる",  tag: "ヘア", iconEmoji: "✂" },
-            { id: "p_hair_free",  label: "🌬 そのまま", tag: "ヘア", iconEmoji: "🌬" }
-          ]
-        },
-        {
-          id: "p_stamp",
-          title: "スタンプ",
-          desc: "トークに1こ送るなら。",
-          choices: [
-            { id: "p_stamp_funny", label: "🤣 おもしろ系", tag: "スタンプ", iconEmoji: "🤣" },
-            { id: "p_stamp_cute",  label: "💗 かわいい系", tag: "スタンプ", iconEmoji: "💗" }
-          ]
-        },
-        {
-          id: "p_desk_item",
-          title: "机の上におくなら",
-          desc: "ひとつだけ。",
-          choices: [
-            { id: "p_item_mirror", label: "🪞 小さいミラー",   tag: "机の上", iconEmoji: "🪞" },
-            { id: "p_item_cream",  label: "🧴 ハンドクリーム", tag: "机の上", iconEmoji: "🧴" }
-          ]
-        },
-        {
-          id: "p_pen_color",
-          title: "ペンの色",
-          desc: "よく使うのは？",
-          choices: [
-            { id: "p_pen_blue",  label: "🖊 青ペン",        tag: "文房具", iconEmoji: "🖊" },
-            { id: "p_pen_color", label: "🖍 カラーペン",    tag: "文房具", iconEmoji: "🖍" }
-          ]
-        },
-        {
-          id: "p_nail_imagine",
-          title: "ネイルのイメトレ",
-          desc: "もしできるなら。",
-          choices: [
-            { id: "p_nail_glitter", label: "✨ きらきら", tag: "ネイル", iconEmoji: "✨" },
-            { id: "p_nail_color",   label: "🌈 カラフル", tag: "ネイル", iconEmoji: "🌈" }
-          ]
-        }
+        { id: "p_morning_color", title: "朝のカラー", desc: "きょうはどっち気分？", choices: [
+          { id: "p_color_warm", label: "🧡 あったか色", tag: "きょうの色", iconEmoji: "🧡" },
+          { id: "p_color_cool", label: "💙 ひんやり色", tag: "きょうの色", iconEmoji: "💙" }
+        ]},
+        { id: "p_accessory", title: "アクセ1こ", desc: "つけるならどっち？", choices: [
+          { id: "p_acc_hair", label: "🎀 ヘアアイテム", tag: "アクセ", iconEmoji: "🎀" },
+          { id: "p_acc_ear",  label: "🎧 みみまわり",   tag: "アクセ", iconEmoji: "🎧" }
+        ]},
+        { id: "p_school_note", title: "ノート", desc: "ページのすみに、ちょこっと。", choices: [
+          { id: "p_note_star", label: "⭐ ほしマーク", tag: "ワンポイント", iconEmoji: "⭐" },
+          { id: "p_note_heart",label: "💖 ハート",    tag: "ワンポイント", iconEmoji: "💖" }
+        ]},
+        { id: "p_after_music", title: "放課後ミニタイム", desc: "気分上げるなら？", choices: [
+          { id: "p_music_dance", label: "💃 テンション高め", tag: "音楽", iconEmoji: "💃" },
+          { id: "p_music_relax", label: "😌 まったり曲",     tag: "音楽", iconEmoji: "😌" }
+        ]},
+        { id: "p_night_good", title: "ねる前ひとこと", desc: "じぶんにもキャラにも。", choices: [
+          { id: "p_night_thx", label: "🙏 「きょうもおつかれ」", tag: "ねぎらい", iconEmoji: "🙏" },
+          { id: "p_night_ok",  label: "👌 「まあまあOK」",       tag: "ねぎらい", iconEmoji: "👌" }
+        ]},
+        { id: "p_socks", title: "くつ下", desc: "きょうの足もと。", choices: [
+          { id: "p_socks_color", label: "🧦 カラフル",   tag: "足もと", iconEmoji: "🧦" },
+          { id: "p_socks_simple",label: "⚪ シンプル",   tag: "足もと", iconEmoji: "⚪" }
+        ]},
+        { id: "p_bag_charm", title: "カバンのチャーム", desc: "つける？つけない？", choices: [
+          { id: "p_charm_on",  label: "🧸 つける",   tag: "チャーム", iconEmoji: "🧸" },
+          { id: "p_charm_off", label: "🙈 つけない", tag: "チャーム", iconEmoji: "🙈" }
+        ]},
+        { id: "p_hair_style", title: "前髪", desc: "気になるときは？", choices: [
+          { id: "p_hair_tie",   label: "✂ まとめる",  tag: "ヘア", iconEmoji: "✂" },
+          { id: "p_hair_free",  label: "🌬 そのまま", tag: "ヘア", iconEmoji: "🌬" }
+        ]},
+        { id: "p_stamp", title: "スタンプ", desc: "トークに1こ送るなら。", choices: [
+          { id: "p_stamp_funny", label: "🤣 おもしろ系", tag: "スタンプ", iconEmoji: "🤣" },
+          { id: "p_stamp_cute",  label: "💗 かわいい系", tag: "スタンプ", iconEmoji: "💗" }
+        ]},
+        { id: "p_desk_item", title: "机の上におくなら", desc: "ひとつだけ。", choices: [
+          { id: "p_item_mirror", label: "🪞 小さいミラー",   tag: "机の上", iconEmoji: "🪞" },
+          { id: "p_item_cream",  label: "🧴 ハンドクリーム", tag: "机の上", iconEmoji: "🧴" }
+        ]},
+        { id: "p_pen_color", title: "ペンの色", desc: "よく使うのは？", choices: [
+          { id: "p_pen_blue",  label: "🖊 青ペン",        tag: "文房具", iconEmoji: "🖊" },
+          { id: "p_pen_color", label: "🖍 カラーペン",    tag: "文房具", iconEmoji: "🖍" }
+        ]},
+        { id: "p_nail_imagine", title: "ネイルのイメトレ", desc: "もしできるなら。", choices: [
+          { id: "p_nail_glitter", label: "✨ きらきら", tag: "ネイル", iconEmoji: "✨" },
+          { id: "p_nail_color",   label: "🌈 カラフル", tag: "ネイル", iconEmoji: "🌈" }
+        ]}
       ],
       green: [
-        {
-          id: "g_morning_stretch",
-          title: "朝のからだ",
-          desc: "起きたときに、どっち？",
-          choices: [
-            { id: "g_m_stretch", label: "🙆 のび〜っと1回", tag: "ストレッチ", iconEmoji: "🙆" },
-            { id: "g_m_ankle",   label: "🦶 足首ぐるぐる",  tag: "ストレッチ", iconEmoji: "🦶" }
-          ]
-        },
-        {
-          id: "g_way",
-          title: "行きかえり",
-          desc: "家との行き来で。",
-          choices: [
-            { id: "g_way_walk", label: "🚶 ちょっと遠回り",   tag: "うごく", iconEmoji: "🚶" },
-            { id: "g_way_quick",label: "🏃 さくっと最短ルート", tag: "うごく", iconEmoji: "🏃" }
-          ]
-        },
-        {
-          id: "g_school_body",
-          title: "休み時間",
-          desc: "からだのお世話。",
-          choices: [
-            { id: "g_s_shoulder", label: "💪 かた回し",   tag: "からだケア", iconEmoji: "💪" },
-            { id: "g_s_eyes",     label: "👀 めストレッチ", tag: "からだケア", iconEmoji: "👀" }
-          ]
-        },
-        {
-          id: "g_after",
-          title: "放課後",
-          desc: "どっちでリセット？",
-          choices: [
-            { id: "g_a_walk", label: "🚶‍♀️ 3分だけ歩く", tag: "リセット", iconEmoji: "🚶‍♀️" },
-            { id: "g_a_rest", label: "🛋 3分ゴロ〜ン",    tag: "リセット", iconEmoji: "🛋" }
-          ]
-        },
-        {
-          id: "g_night_sleep",
-          title: "ねる前",
-          desc: "ねむりのスイッチ。",
-          choices: [
-            { id: "g_n_screen", label: "📵 画面オフしてねる", tag: "ねむり", iconEmoji: "📵" },
-            { id: "g_n_breath", label: "🌙 深呼吸3回",       tag: "ねむり", iconEmoji: "🌙" }
-          ]
-        },
-        {
-          id: "g_chair_sit",
-          title: "いすのすわり方",
-          desc: "いまの体勢は？",
-          choices: [
-            { id: "g_sit_straight", label: "🪑 せすじピン",   tag: "姿勢", iconEmoji: "🪑" },
-            { id: "g_sit_relax",    label: "😌 ちょいだらん", tag: "姿勢", iconEmoji: "😌" }
-          ]
-        },
-        {
-          id: "g_drink_temp",
-          title: "のみもの温度",
-          desc: "からだがよろこぶのは？",
-          choices: [
-            { id: "g_temp_cold", label: "🧊 つめたい",  tag: "のみもの", iconEmoji: "🧊" },
-            { id: "g_temp_warm", label: "☕ あったかい", tag: "のみもの", iconEmoji: "☕" }
-          ]
-        },
-        {
-          id: "g_hand_wash",
-          title: "手あらい",
-          desc: "ごはん前や帰宅時。",
-          choices: [
-            { id: "g_hw_soap", label: "🧼 ちゃんとあらう", tag: "手あらい", iconEmoji: "🧼" },
-            { id: "g_hw_water",label: "💦 水だけササッ",   tag: "手あらい", iconEmoji: "💦" }
-          ]
-        },
-        {
-          id: "g_stairs",
-          title: "のぼりおり",
-          desc: "建物の中で。",
-          choices: [
-            { id: "g_stairs_step", label: "🧗‍♀️ かいだん",  tag: "うごく", iconEmoji: "🧗‍♀️" },
-            { id: "g_stairs_elev", label: "🛗 エレベーター", tag: "うごく", iconEmoji: "🛗" }
-          ]
-        },
-        {
-          id: "g_bed_side",
-          title: "ベッドの上",
-          desc: "そばにおくなら。",
-          choices: [
-            { id: "g_bed_book",  label: "📚 本1さつ",      tag: "ねむり", iconEmoji: "📚" },
-            { id: "g_bed_plush", label: "🧸 ぬいぐるみ",   tag: "ねむり", iconEmoji: "🧸" }
-          ]
-        },
-        {
-          id: "g_morning_light",
-          title: "朝のひかり",
-          desc: "起きたとき。",
-          choices: [
-            { id: "g_light_open", label: "🌤 カーテンあける", tag: "ねむり", iconEmoji: "🌤" },
-            { id: "g_light_close",label: "🌙 そのまま",       tag: "ねむり", iconEmoji: "🌙" }
-          ]
-        }
+        { id: "g_morning_stretch", title: "朝のからだ", desc: "起きたときに、どっち？", choices: [
+          { id: "g_m_stretch", label: "🙆 のび〜っと1回", tag: "ストレッチ", iconEmoji: "🙆" },
+          { id: "g_m_ankle",   label: "🦶 足首ぐるぐる",  tag: "ストレッチ", iconEmoji: "🦶" }
+        ]},
+        { id: "g_way", title: "行きかえり", desc: "家との行き来で。", choices: [
+          { id: "g_way_walk", label: "🚶 ちょっと遠回り",   tag: "うごく", iconEmoji: "🚶" },
+          { id: "g_way_quick",label: "🏃 さくっと最短ルート", tag: "うごく", iconEmoji: "🏃" }
+        ]},
+        { id: "g_school_body", title: "休み時間", desc: "からだのお世話。", choices: [
+          { id: "g_s_shoulder", label: "💪 かた回し",   tag: "からだケア", iconEmoji: "💪" },
+          { id: "g_s_eyes",     label: "👀 めストレッチ", tag: "からだケア", iconEmoji: "👀" }
+        ]},
+        { id: "g_after", title: "放課後", desc: "どっちでリセット？", choices: [
+          { id: "g_a_walk", label: "🚶‍♀️ 3分だけ歩く", tag: "リセット", iconEmoji: "🚶‍♀️" },
+          { id: "g_a_rest", label: "🛋 3分ゴロ〜ン",    tag: "リセット", iconEmoji: "🛋" }
+        ]},
+        { id: "g_night_sleep", title: "ねる前", desc: "ねむりのスイッチ。", choices: [
+          { id: "g_n_screen", label: "📵 画面オフしてねる", tag: "ねむり", iconEmoji: "📵" },
+          { id: "g_n_breath", label: "🌙 深呼吸3回",       tag: "ねむり", iconEmoji: "🌙" }
+        ]},
+        { id: "g_chair_sit", title: "いすのすわり方", desc: "いまの体勢は？", choices: [
+          { id: "g_sit_straight", label: "🪑 せすじピン",   tag: "姿勢", iconEmoji: "🪑" },
+          { id: "g_sit_relax",    label: "😌 ちょいだらん", tag: "姿勢", iconEmoji: "😌" }
+        ]},
+        { id: "g_drink_temp", title: "のみもの温度", desc: "からだがよろこぶのは？", choices: [
+          { id: "g_temp_cold", label: "🧊 つめたい",  tag: "のみもの", iconEmoji: "🧊" },
+          { id: "g_temp_warm", label: "☕ あったかい", tag: "のみもの", iconEmoji: "☕" }
+        ]},
+        { id: "g_hand_wash", title: "手あらい", desc: "ごはん前や帰宅時。", choices: [
+          { id: "g_hw_soap", label: "🧼 ちゃんとあらう", tag: "手あらい", iconEmoji: "🧼" },
+          { id: "g_hw_water",label: "💦 水だけササッ",   tag: "手あらい", iconEmoji: "💦" }
+        ]},
+        { id: "g_stairs", title: "のぼりおり", desc: "建物の中で。", choices: [
+          { id: "g_stairs_step", label: "🧗‍♀️ かいだん",  tag: "うごく", iconEmoji: "🧗‍♀️" },
+          { id: "g_stairs_elev", label: "🛗 エレベーター", tag: "うごく", iconEmoji: "🛗" }
+        ]},
+        { id: "g_bed_side", title: "ベッドの上", desc: "そばにおくなら。", choices: [
+          { id: "g_bed_book",  label: "📚 本1さつ",      tag: "ねむり", iconEmoji: "📚" },
+          { id: "g_bed_plush", label: "🧸 ぬいぐるみ",   tag: "ねむり", iconEmoji: "🧸" }
+        ]},
+        { id: "g_morning_light", title: "朝のひかり", desc: "起きたとき。", choices: [
+          { id: "g_light_open", label: "🌤 カーテンあける", tag: "ねむり", iconEmoji: "🌤" },
+          { id: "g_light_close",label: "🌙 そのまま",       tag: "ねむり", iconEmoji: "🌙" }
+        ]}
       ]
     };
 
@@ -1039,6 +879,9 @@
       currentDay: 1
     };
 
+    const SAVE_KEY = "osewa_save_v1";
+
+    const screenResume  = document.getElementById("screen-resume");
     const screenStart   = document.getElementById("screen-start");
     const screenScenes  = document.getElementById("screen-scenes");
     const screenLog     = document.getElementById("screen-log");
@@ -1079,19 +922,29 @@
 
     const effectLayer = document.getElementById("effect-layer");
 
+    const resumeBubble = document.getElementById("resume-bubble");
+    const resumeInfo   = document.getElementById("resume-info");
+    const btnResumeContinue = document.getElementById("btn-resume-continue");
+    const btnResumeNew      = document.getElementById("btn-resume-new");
+
     let currentScenes = [];
     let currentSceneIndex = 0;
+    let currentScreenKey = "start";
 
-    function showScreen(target) {
-      [screenStart, screenScenes, screenLog, screenSummary].forEach((s) =>
+    function showScreen(target, key) {
+      [screenResume, screenStart, screenScenes, screenLog, screenSummary].forEach((s) =>
         s.classList.remove("active")
       );
       target.classList.add("active");
-      if (target === screenStart || !state.characterId) {
+
+      currentScreenKey = key || currentScreenKey;
+
+      if (target === screenStart || target === screenResume || !state.characterId) {
         charVisual.classList.add("hidden");
       } else {
         charVisual.classList.remove("hidden");
       }
+      saveGame();
     }
 
     function getActiveCharacter() {
@@ -1164,12 +1017,19 @@
         span.style.setProperty("--ty", ty + "px");
 
         effectLayer.appendChild(span);
-        setTimeout(() => effectLayer.removeChild(span), 800);
+        setTimeout(() => {
+          if (span.parentNode === effectLayer) effectLayer.removeChild(span);
+        }, 800);
       }
     }
 
     function updateStartButtonState() {
       btnStartNext.disabled = !(state.characterId && state.courseDays);
+    }
+
+    function findSceneById(sceneId) {
+      const pool = getScenePool();
+      return pool.find(sc => sc.id === sceneId) || null;
     }
 
     // 1日分のシーンをランダムに5個えらぶ
@@ -1187,6 +1047,7 @@
       state.selections = {};
       state.results = {};
       currentSceneIndex = 0;
+      saveGame();
     }
 
     function renderScene() {
@@ -1258,6 +1119,7 @@
           triggerHearts(r.left + r.width / 2, r.top + r.height / 2);
 
           updateSceneNextButton();
+          saveGame();
         });
 
         choiceListEl.appendChild(li);
@@ -1265,6 +1127,7 @@
 
       btnSceneBack.disabled = currentSceneIndex === 0;
       updateSceneNextButton();
+      saveGame();
     }
 
     function updateSceneNextButton() {
@@ -1328,6 +1191,7 @@
               b.classList.toggle("selected", b.dataset.level === lv.id);
             });
             updateLogFinishButton();
+            saveGame();
           });
 
           buttonsDiv.appendChild(btn);
@@ -1341,6 +1205,7 @@
       });
 
       updateLogFinishButton();
+      saveGame();
     }
 
     function updateLogFinishButton() {
@@ -1460,6 +1325,182 @@
       }
 
       updateDayLabel();
+      saveGame();
+    }
+
+    function setSelectionsOnStartUI() {
+      courseCards.forEach(function (c) { c.classList.remove("selected"); });
+      if (state.courseDays) {
+        courseCards.forEach(function (c) {
+          if (parseInt(c.dataset.courseDays, 10) === state.courseDays) c.classList.add("selected");
+        });
+      }
+
+      charCards.forEach(function (c) { c.classList.remove("selected"); });
+      if (state.characterId) {
+        charCards.forEach(function (c) {
+          if (c.dataset.charId === state.characterId) c.classList.add("selected");
+        });
+        const char = getActiveCharacter();
+        if (char) startBubble.textContent = char.name + "：「" + char.tag + " をいっしょにやろう！」";
+      } else {
+        startBubble.textContent = "コースとキャラをタップしてね 😊";
+      }
+
+      updateStartButtonState();
+      updateDayLabel();
+      updateHeartView();
+    }
+
+    function getCurrentScenesIds() {
+      return (currentScenes || []).map(sc => sc.id);
+    }
+
+    function rebuildScenesFromIds(sceneIds) {
+      const list = [];
+      (sceneIds || []).forEach(function (id) {
+        const sc = findSceneById(id);
+        if (sc) list.push(sc);
+      });
+      currentScenes = list;
+      if (currentScenes.length === 0) {
+        prepareScenesForDay();
+      }
+    }
+
+    function saveGame() {
+      try {
+        const payload = {
+          v: 1,
+          savedAt: Date.now(),
+          state: {
+            characterId: state.characterId,
+            selections: state.selections,
+            results: state.results,
+            heart: state.heart,
+            courseDays: state.courseDays,
+            currentDay: state.currentDay
+          },
+          runtime: {
+            currentScenesIds: getCurrentScenesIds(),
+            currentSceneIndex: currentSceneIndex,
+            currentScreenKey: currentScreenKey
+          }
+        };
+        localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+      } catch (e) {}
+    }
+
+    function loadGame() {
+      try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return null;
+        const obj = JSON.parse(raw);
+        if (!obj || !obj.state) return null;
+        return obj;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function clearSave() {
+      try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+    }
+
+    function resetAllToNewGame() {
+      state.characterId = null;
+      state.selections = {};
+      state.results = {};
+      state.heart = 0;
+      state.courseDays = null;
+      state.currentDay = 1;
+
+      currentScenes = [];
+      currentSceneIndex = 0;
+      currentScreenKey = "start";
+
+      updateHeartView();
+      updateDayLabel();
+
+      courseCards.forEach(function (c) { c.classList.remove("selected"); });
+      charCards.forEach(function (c) { c.classList.remove("selected"); });
+      startBubble.textContent = "コースとキャラをタップしてね 😊";
+      updateStartButtonState();
+    }
+
+    function applyLoadedGame(obj) {
+      const s = obj.state || {};
+      state.characterId = s.characterId || null;
+      state.selections = s.selections || {};
+      state.results = s.results || {};
+      state.heart = typeof s.heart === "number" ? s.heart : 0;
+      state.courseDays = typeof s.courseDays === "number" ? s.courseDays : null;
+      state.currentDay = typeof s.currentDay === "number" ? s.currentDay : 1;
+
+      const rt = obj.runtime || {};
+      currentSceneIndex = typeof rt.currentSceneIndex === "number" ? rt.currentSceneIndex : 0;
+      currentScreenKey = rt.currentScreenKey || "start";
+
+      rebuildScenesFromIds(rt.currentScenesIds || []);
+      if (currentSceneIndex < 0) currentSceneIndex = 0;
+      if (currentSceneIndex > currentScenes.length - 1) currentSceneIndex = 0;
+
+      setSelectionsOnStartUI();
+    }
+
+    function renderResumeInfo(obj) {
+      const s = obj.state || {};
+      const char = characters.find(c => c.id === s.characterId);
+      const stage = computeStage(s.currentDay);
+
+      const lines = [];
+      if (char) lines.push("キャラ：" + char.name);
+      if (s.courseDays) lines.push("コース：" + s.courseDays + "日");
+      if (s.currentDay) lines.push("いま：" + s.currentDay + "日目（" + getStageLabel(stage) + "）");
+      if (typeof s.heart === "number") lines.push("ハート：" + s.heart);
+
+      const when = obj.savedAt ? new Date(obj.savedAt) : null;
+      if (when) {
+        const yy = when.getFullYear();
+        const mm = String(when.getMonth() + 1).padStart(2, "0");
+        const dd = String(when.getDate()).padStart(2, "0");
+        const hh = String(when.getHours()).padStart(2, "0");
+        const mi = String(when.getMinutes()).padStart(2, "0");
+        lines.push("保存：" + yy + "/" + mm + "/" + dd + " " + hh + ":" + mi);
+      }
+
+      resumeInfo.innerHTML = "";
+      lines.forEach(function (line) {
+        const p = document.createElement("p");
+        p.style.margin = "4px 0";
+        p.textContent = line;
+        resumeInfo.appendChild(p);
+      });
+
+      resumeBubble.textContent = "途中までのデータが見つかったよ。つづきから？それとも、はじめから？";
+    }
+
+    function goByScreenKey(key) {
+      if (key === "scenes") {
+        updateCharVisual();
+        showScreen(screenScenes, "scenes");
+        renderScene();
+        return;
+      }
+      if (key === "log") {
+        updateCharVisual();
+        showScreen(screenLog, "log");
+        renderLogScreen();
+        return;
+      }
+      if (key === "summary") {
+        updateCharVisual();
+        showScreen(screenSummary, "summary");
+        renderSummary();
+        return;
+      }
+      showScreen(screenStart, "start");
+      setSelectionsOnStartUI();
     }
 
     courseCards.forEach(function (card) {
@@ -1470,6 +1511,8 @@
         card.classList.add("selected");
         updateDayLabel();
         updateStartButtonState();
+        currentScreenKey = "start";
+        saveGame();
       });
     });
 
@@ -1486,6 +1529,8 @@
         }
         updateDayLabel();
         updateStartButtonState();
+        currentScreenKey = "start";
+        saveGame();
       });
     });
 
@@ -1497,17 +1542,19 @@
       updateDayLabel();
       updateCharVisual();
       prepareScenesForDay();
-      showScreen(screenScenes);
+      showScreen(screenScenes, "scenes");
       renderScene();
     });
 
     btnSceneBack.addEventListener("click", function () {
       if (currentSceneIndex === 0) {
-        showScreen(screenStart);
+        showScreen(screenStart, "start");
+        setSelectionsOnStartUI();
       } else {
         currentSceneIndex -= 1;
         renderScene();
       }
+      saveGame();
     });
 
     btnSceneNext.addEventListener("click", function () {
@@ -1515,19 +1562,22 @@
         currentSceneIndex += 1;
         renderScene();
       } else {
-        showScreen(screenLog);
+        showScreen(screenLog, "log");
         renderLogScreen();
       }
+      saveGame();
     });
 
     btnLogBack.addEventListener("click", function () {
-      showScreen(screenScenes);
+      showScreen(screenScenes, "scenes");
       renderScene();
+      saveGame();
     });
 
     btnLogFinish.addEventListener("click", function () {
-      showScreen(screenSummary);
+      showScreen(screenSummary, "summary");
       renderSummary();
+      saveGame();
     });
 
     btnSummaryNextday.addEventListener("click", function () {
@@ -1535,31 +1585,53 @@
       state.currentDay += 1;
       updateDayLabel();
       prepareScenesForDay();
-      showScreen(screenScenes);
+      showScreen(screenScenes, "scenes");
       renderScene();
+      saveGame();
     });
 
     btnSummaryRestart.addEventListener("click", function () {
-      state.characterId = null;
-      state.selections = {};
-      state.results = {};
-      state.heart = 0;
-      state.courseDays = null;
-      state.currentDay = 1;
-      currentScenes = [];
-      currentSceneIndex = 0;
-      updateHeartView();
-      updateDayLabel();
-      courseCards.forEach(function (c) { c.classList.remove("selected"); });
-      charCards.forEach(function (c) { c.classList.remove("selected"); });
-      startBubble.textContent = "コースとキャラをタップしてね 😊";
-      updateStartButtonState();
-      showScreen(screenStart);
+      clearSave();
+      resetAllToNewGame();
+      showScreen(screenStart, "start");
+      saveGame();
     });
 
-    updateHeartView();
-    updateDayLabel();
-    updateStartButtonState();
+    btnResumeContinue.addEventListener("click", function () {
+      const obj = loadGame();
+      if (!obj) {
+        showScreen(screenStart, "start");
+        return;
+      }
+      applyLoadedGame(obj);
+      goByScreenKey(currentScreenKey);
+      saveGame();
+    });
+
+    btnResumeNew.addEventListener("click", function () {
+      clearSave();
+      resetAllToNewGame();
+      showScreen(screenStart, "start");
+      saveGame();
+    });
+
+    window.addEventListener("beforeunload", function () {
+      saveGame();
+    });
+
+    // 初期起動：保存があれば「つづき」画面、なければスタート画面
+    (function init() {
+      const saved = loadGame();
+      if (saved && saved.state && (saved.state.characterId || saved.state.courseDays || saved.state.heart || saved.state.currentDay > 1)) {
+        renderResumeInfo(saved);
+        showScreen(screenResume, "resume");
+      } else {
+        showScreen(screenStart, "start");
+      }
+      updateHeartView();
+      updateDayLabel();
+      updateStartButtonState();
+    })();
   </script>
 </body>
 </html>
